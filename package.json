@@ -1,0 +1,80 @@
+{
+  "name": "novel-chapter-fetch",
+  "version": "1.0.0",
+  "description": "easily read web novels multiple chapters at a time (optimized for ios read screen)",
+  "main": "src/index.tsx",
+  "author": "fuzetsu",
+  "dependencies": {
+    "preact": "^10.6.6"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "chokidar-cli": "^3.0.0",
+    "concurrently": "^7.0.0",
+    "esbuild": "^0.14.23",
+    "eslint": "^8.9.0",
+    "ncp": "^2.0.0",
+    "npm-run-all": "^4.1.5",
+    "reload": "^3.2.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.5.5"
+  },
+  "scripts": {
+    "build": "npm-run-all b:*",
+    "lint": "eslint .",
+    "dev": "npm-run-all b:clean b:make-dir b:html run-dev",
+    "run-dev": "concurrently --raw --kill-others npm:watch:*",
+    "b:clean": "rimraf dist",
+    "b:make-dir": "mkdir dist",
+    "b:html": "ncp index.html dist/index.html",
+    "b:bundle": "esbuild src/index.tsx --bundle --loader:.svg=text --inject:./src/shims/preact.ts --jsx-factory=h --jsx-fragment=Fragment --outfile=dist/bundle.js --minify --sourcemap --analyze",
+    "watch:lint": "chokidar \"./dist/*\" -c \"eslint .\"",
+    "watch:build": "esbuild src/index.tsx --bundle --loader:.svg=text --inject:./src/shims/preact.ts --jsx-factory=h --jsx-fragment=Fragment --watch --sourcemap --analyze --outfile=dist/bundle.js",
+    "watch:ts": "tsc --watch --preserveWatchOutput",
+    "watch:reload": "reload -b -d dist -p 3333"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "browser": true
+    },
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "ignorePatterns": [
+      "dist/*"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.ts",
+          "**/*.tsx"
+        ]
+      }
+    ],
+    "rules": {
+      "@typescript-eslint/explicit-module-boundary-types": "off"
+    }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 100,
+    "useTabs": false,
+    "tabWidth": 2,
+    "semi": false,
+    "arrowParens": "avoid",
+    "trailingComma": "none"
+  }
+}

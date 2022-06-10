@@ -1,0 +1,64 @@
+.app {
+  padding: 15px;
+  margin-bottom: 100px;
+}
+
+a {
+  color: lightblue;
+  text-decoration: none;
+}
+
+a:hover,
+a:visited,
+a:active {
+  text-decoration: underline;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+html {
+  font-family: sans-serif;
+  background: black;
+  color: white;
+  font-size: 140%;
+}
+
+button {
+  cursor: pointer;
+}
+
+button,
+input {
+  padding: 8px 12px;
+  font-size: inherit;
+  font-family: inherit;
+  border: none;
+  margin: 4px;
+  color: black;
+  background: #efefef;
+  border-radius: 4px;
+}
+
+input.error {
+  background: #a04949;
+  color: white;
+}
+
+.center {
+  text-align: center;
+}
+
+.next-chapter-action {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  opacity: 0.4;
+  background: black;
+  color: white;
+  border: 1px solid white;
+}
