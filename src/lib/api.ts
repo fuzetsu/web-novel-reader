@@ -11,7 +11,12 @@ const fetchDoc = (url: string) =>
     .then(res => res.text())
     .then(html => new DOMParser().parseFromString(html, 'text/html'))
 
-export const fetchChapter = (chapter: number) =>
-  fetchDoc(`https://novelfull.com/${NOVEL_ID}/chapter-${chapter}.html`).then(doc =>
-    qq('#chapter-content p', doc).map(paragraph => paragraph.textContent || '')
-  )
+const chapterCache = new Map<number, string[]>()
+export const fetchChapter = async (chapter: number) => {
+  const cachedChapter = chapterCache.get(chapter)
+  if (cachedChapter) return cachedChapter
+  const doc = await fetchDoc(`https://novelfull.com/${NOVEL_ID}/chapter-${chapter}.html`)
+  const lines = qq('#chapter-content p', doc).map(paragraph => paragraph.textContent || '')
+  chapterCache.set(chapter, lines)
+  return lines
+}

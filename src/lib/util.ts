@@ -7,6 +7,17 @@ export function repeat<T>(times: number, mapFn: (index: number) => T) {
   return Array.from({ length: times }, (_, index) => mapFn(index))
 }
 
+export function delayWithCancel(delay: number, action: () => () => void) {
+  let cancel: undefined | (() => void)
+  const id = setTimeout(() => {
+    cancel = action()
+  }, delay)
+  return () => {
+    clearTimeout(id)
+    cancel?.()
+  }
+}
+
 export function promiseWithCancel<T>(promise: Promise<T>, then: (thing: T) => unknown) {
   let cancel = false
   promise.then(thing => {
