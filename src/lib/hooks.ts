@@ -67,7 +67,8 @@ export function usePersistedState<T>(key: string, initialValue: T) {
     } catch (error: unknown) {
       return initialValue
     }
-  }, [])
+  }, [key])
+  useEffect(() => setState(savedValue), [savedValue])
   const [state, setState] = useState(savedValue)
 
   const persist = useThrottledFn(500, (newState: T) => {
@@ -84,4 +85,14 @@ export function usePersistedState<T>(key: string, initialValue: T) {
   )
 
   return [state, update] as const
+}
+
+export function useLocationHash() {
+  const [hash, setHash] = useState(location.hash)
+  useEffect(() => {
+    const handler = () => setHash(location.hash)
+    window.addEventListener('hashchange', handler)
+    return () => window.removeEventListener('hashchange', handler)
+  })
+  return hash
 }
