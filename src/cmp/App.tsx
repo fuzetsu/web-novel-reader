@@ -49,7 +49,8 @@ export function App() {
 
   const changeNovel = (evt: Event) => {
     evt.preventDefault()
-    location.hash = '/' + (prompt('Edit novelfull ID', novelId || '') || '').toLowerCase()
+    location.hash =
+      '/' + (prompt('Edit novelfull ID', novelId || '') || novelId || '').toLowerCase()
   }
 
   const novelName = useMemo(
