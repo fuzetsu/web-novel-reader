@@ -71,10 +71,9 @@ export function usePersistedState<T>(key: string, initialValue: T) {
   useEffect(() => setState(savedValue), [savedValue])
   const [state, setState] = useState(savedValue)
 
-  const persist = useThrottledFn(500, (newState: T) => {
-    console.log('saved state', newState)
+  const persist = useThrottledFn(500, (newState: T) =>
     localStorage.setItem(key, JSON.stringify(newState))
-  })
+  )
 
   const update = useCallback(
     (newState: T) => {

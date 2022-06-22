@@ -19,7 +19,6 @@ export function App() {
   useEffect(() => {
     scrollToTop()
     setChapters([])
-    console.log({ novelId })
     if (!novelId) return
     return delayWithCancel(500, () =>
       promiseWithCancel(
