@@ -49,7 +49,7 @@ export function App() {
 
   const changeNovel = (evt: Event) => {
     evt.preventDefault()
-    location.hash = '/' + prompt('Edit novelfull ID', novelId || '')
+    location.hash = '/' + (prompt('Edit novelfull ID', novelId || '') || '').toLowerCase()
   }
 
   const novelName = useMemo(
