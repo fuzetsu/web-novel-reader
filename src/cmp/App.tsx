@@ -1,36 +1,37 @@
 import { fetchChapter } from 'lib/api'
-import { useThrottledScroll } from 'lib/hooks'
+import { usePersistedState, useThrottledScroll } from 'lib/hooks'
 import { delayWithCancel, promiseWithCancel, q, qq, repeat, scrollToTop } from 'lib/util'
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useMemo, useState } from 'preact/hooks'
 import { Chapter } from './Chapter'
 import { CurrentChapterControl } from './CurrentChapterControl'
 import { LoadCountControl } from './LoadCountControl'
 import { ScrollControl } from './ScrollControl'
 
-const INITIAL_CHAPTER = Number(localStorage.getItem('last-chap') || 1)
-const INITIAL_LOAD_COUNT = Number(localStorage.getItem('last-load-count') || 1)
-const INITIAL_LAST_POS = localStorage.getItem('last-pos')
-
 export function App() {
-  // load chapters and save config whenever vars change
-  const [currentChapter, setCurrentChapter] = useState(INITIAL_CHAPTER)
-  const [loadCount, setLoadCount] = useState(INITIAL_LOAD_COUNT)
+  const [novelId, setNovelId] = usePersistedState<string | null>('novel-id', 'overgeared')
   const [chapters, setChapters] = useState<string[][]>([])
+  const [currentChapter, setCurrentChapter] = usePersistedState('cur-chap', 1)
+  const [loadCount, setLoadCount] = usePersistedState('load-count', 1)
+
   useEffect(() => {
     scrollToTop()
     setChapters([])
-    localStorage.setItem('last-chap', String(currentChapter))
-    localStorage.setItem('last-load-count', String(loadCount))
+    console.log({ novelId })
+    if (!novelId) return
     return delayWithCancel(500, () =>
       promiseWithCancel(
-        Promise.all(repeat(loadCount, index => fetchChapter(currentChapter + index))),
+        Promise.all(
+          repeat(loadCount, index =>
+            fetchChapter(novelId, currentChapter + index).catch(() => ['Error fetching chapter.'])
+          )
+        ),
         setChapters
       )
     )
-  }, [currentChapter, loadCount])
+  }, [novelId, currentChapter, loadCount])
 
   // restore scroll position when chapters load
-  const [lastPos, setLastPos] = useState<string | null>(INITIAL_LAST_POS)
+  const [lastPos, setLastPos] = usePersistedState<string | null>('last-pos', null)
   useEffect(() => {
     if (!lastPos || !chapters.length || lastPos === `${currentChapter}-0`) return
     q(`[data-pos="${lastPos}"]`)?.scrollIntoView()
@@ -41,8 +42,19 @@ export function App() {
     const pos = qq<HTMLElement>('[data-pos]').find(pos => pos.getBoundingClientRect().bottom > 0)
       ?.dataset.pos
     console.log('saving pos!', pos)
-    if (pos) localStorage.setItem('last-pos', pos)
+    if (pos) localStorage.setItem('last-pos', JSON.stringify(pos))
   })
+
+  const changeNovel = () => setNovelId(prompt('Edit novelfull ID', novelId || ''))
+
+  const novelName = useMemo(
+    () =>
+      novelId
+        ?.split('-')
+        .map(part => part[0].toUpperCase() + part.slice(1))
+        .join(' '),
+    [novelId]
+  )
 
   const chapterControls = (
     <div aria-hidden className="center">
@@ -54,9 +66,22 @@ export function App() {
     </div>
   )
 
+  if (!novelId) {
+    return (
+      <div className="center">
+        <button onClick={changeNovel}>Choose novel</button>
+      </div>
+    )
+  }
+
   return (
     <main className="app">
       <div aria-hidden className="center">
+        <h1>
+          <a href="#" onClick={changeNovel}>
+            {novelName}
+          </a>
+        </h1>
         <LoadCountControl loadCount={loadCount} onChange={setLoadCount} />
       </div>
       {chapterControls}
