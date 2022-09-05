@@ -3,8 +3,6 @@ interface Props {
   lines?: string[]
 }
 
-const COMMENTS_URL = 'https://www.wuxiaworld.com/novel/overgeared/og-chapter-'
-
 export function Chapter({ chapter, lines }: Props) {
   if (!lines) return <h3>Loading chapter {chapter}</h3>
 
@@ -16,11 +14,6 @@ export function Chapter({ chapter, lines }: Props) {
           {line}
         </p>
       ))}
-      <p aria-hidden>
-        <a target="_blank" rel="noreferrer" href={COMMENTS_URL + chapter}>
-          Wuxiaworld comments for chapter {chapter}
-        </a>
-      </p>
     </div>
   )
 }
