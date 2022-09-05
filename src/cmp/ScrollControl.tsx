@@ -22,7 +22,7 @@ export function ScrollControl() {
     const chapters = qq('[data-chapter]')
     if (scrollingDown) {
       const nextChapter = chapters.find(
-        chapter => chapter.getBoundingClientRect().top - window.innerHeight > 0
+        chapter => chapter.getBoundingClientRect().top - window.innerHeight > -10
       )
       if (nextChapter) nextChapter.scrollIntoView()
       else scrollToBottom()
