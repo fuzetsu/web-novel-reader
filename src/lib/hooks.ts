@@ -63,7 +63,7 @@ export function usePersistedState<T>(key: string, initialValue: T) {
   const savedValue = useMemo<T>(() => {
     try {
       const saved = localStorage.getItem(key)
-      return (saved && JSON.parse(saved)) || initialValue
+      return (saved && JSON.parse(saved)) ?? initialValue
     } catch (error: unknown) {
       return initialValue
     }
