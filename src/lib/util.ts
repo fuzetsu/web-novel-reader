@@ -30,3 +30,8 @@ export function promiseWithCancel<T>(promise: Promise<T>, then: (thing: T) => un
 
 export const scrollToTop = () => window.scrollTo(0, 0)
 export const scrollToBottom = () => window.scrollTo(0, document.scrollingElement?.scrollHeight || 0)
+
+export const preventDefault = (fn: () => void) => (evt: Event) => {
+  evt.preventDefault()
+  fn()
+}

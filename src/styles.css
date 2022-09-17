@@ -62,3 +62,16 @@ input.error {
   color: white;
   border: 1px solid white;
 }
+
+.small {
+  font-size: 80%;
+}
+
+.huge {
+  font-size: 200%;
+}
+
+.chapter {
+  padding-top: .5rem;
+  margin-bottom: 2rem;
+}

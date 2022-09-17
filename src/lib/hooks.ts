@@ -87,11 +87,11 @@ export function usePersistedState<T>(key: string, initialValue: T) {
 }
 
 export function useLocationHash() {
-  const [hash, setHash] = useState(location.hash)
+  const [hash, setHash] = useState(() => location.hash.slice(2))
   useEffect(() => {
-    const handler = () => setHash(location.hash)
+    const handler = () => setHash(location.hash.slice(2))
     window.addEventListener('hashchange', handler)
     return () => window.removeEventListener('hashchange', handler)
-  })
+  }, [])
   return hash
 }
