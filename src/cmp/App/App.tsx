@@ -24,13 +24,13 @@ export function App() {
   const clearResume = preventDefault(() => setNewestChapter(currentChapter))
 
   const chapterControls = (
-    <div aria-hidden className="center">
+    <p aria-hidden className="center">
       <CurrentChapterControl
         loadCount={loadCount}
         chapter={currentChapter}
         onChange={setCurrentChapter}
       />
-    </div>
+    </p>
   )
 
   if (!novelId) {
@@ -50,18 +50,18 @@ export function App() {
           </a>
         </h1>
         <LoadCountControl loadCount={loadCount} onChange={setLoadCount} />
-        {newestChapter > currentChapter && (
-          <p>
-            <a href="" onClick={resumeNewestChapter}>
-              Resume {newestChapter}
-            </a>{' '}
-            <a href="" onClick={clearResume}>
-              (reset)
-            </a>
-          </p>
-        )}
       </div>
       {chapterControls}
+      {newestChapter > currentChapter && (
+        <p aria-hidden className="center">
+          <a href="" onClick={resumeNewestChapter}>
+            Resume {newestChapter}
+          </a>{' '}
+          <a href="" onClick={clearResume}>
+            (reset)
+          </a>
+        </p>
+      )}
       {repeat(loadCount, index => {
         const chapter = currentChapter + index
         return (
@@ -74,7 +74,8 @@ export function App() {
         )
       })}
       {chapterControls}
-      <div className="center">
+      <div aria-label="End of content. Thanks for reading bud."></div>
+      <div aria-hidden className="center">
         <button onClick={scrollToTop}>Scroll to the top</button>
       </div>
       <ScrollControl />
