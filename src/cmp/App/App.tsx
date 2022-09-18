@@ -74,7 +74,7 @@ export function App() {
         )
       })}
       {chapterControls}
-      <div aria-label="End of content. Thanks for reading bud."></div>
+      <div className="screenreader-only">End of content. Thanks for reading bud.</div>
       <div aria-hidden className="center">
         <button onClick={scrollToTop}>Scroll to the top</button>
       </div>
