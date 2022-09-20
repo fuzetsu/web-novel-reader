@@ -68,7 +68,7 @@ export function App() {
           <Chapter
             key={chapter}
             chapter={chapter}
-            loadCount={loadCount}
+            isTopChapter={index === 0}
             setChapter={() => setCurrentChapter(chapter)}
             lines={chapters[index]}
           />

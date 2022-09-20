@@ -1,18 +1,18 @@
 interface Props {
   chapter: number
-  loadCount: number
+  isTopChapter: boolean
   setChapter(): void
   lines?: string[]
 }
 
-export function Chapter({ chapter, loadCount, lines, setChapter }: Props) {
+export function Chapter({ chapter, isTopChapter, lines, setChapter }: Props) {
   if (!lines) return <h3>Loading chapter {chapter}</h3>
 
   return (
     <div className="chapter" data-chapter={chapter}>
       <p data-pos={`${chapter}-0`}>
         <span className="huge">Chapter {chapter} </span>
-        {loadCount > 1 && (
+        {!isTopChapter && (
           <a
             aria-hidden
             className="small no-wrap"
