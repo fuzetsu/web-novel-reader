@@ -25,7 +25,9 @@ export function CurrentChapterControl({ chapter, loadCount, onChange }: Props) {
   return (
     <div>
       {chapter > 1 && (
-        <button onClick={() => handleChange(previousChapter)}>{previousChapter} &#8592;</button>
+        <button onClick={() => handleChange(previousChapter)}>
+          {loadCount > 1 && previousChapter} &#8592;
+        </button>
       )}
       <input
         className={inputError ? 'error' : ''}
@@ -40,7 +42,9 @@ export function CurrentChapterControl({ chapter, loadCount, onChange }: Props) {
           if (!error) handleChange(userInput)
         }}
       />
-      <button onClick={() => handleChange(nextChapter)}>&#8594; {nextChapter}</button>
+      <button onClick={() => handleChange(nextChapter)}>
+        &#8594; {loadCount > 1 && nextChapter}
+      </button>
     </div>
   )
 }

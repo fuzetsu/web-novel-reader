@@ -68,13 +68,14 @@ export function App() {
           <Chapter
             key={chapter}
             chapter={chapter}
+            loadCount={loadCount}
             setChapter={() => setCurrentChapter(chapter)}
             lines={chapters[index]}
           />
         )
       })}
       {chapterControls}
-      <div className="screenreader-only">End of content. Thanks for reading bud.</div>
+      <div className="screenreader-only">End of content. Thanks for reading pal.</div>
       <div aria-hidden className="center">
         <button onClick={scrollToTop}>Scroll to the top</button>
       </div>
