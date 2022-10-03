@@ -6,7 +6,7 @@ interface Props {
 }
 
 export function Chapter({ chapter, isTopChapter, lines, setChapter }: Props) {
-  if (!lines) return <h3>Loading chapter {chapter}</h3>
+  if (!lines) lines = [`Loading...`]
 
   return (
     <div className="chapter" data-chapter={chapter}>
