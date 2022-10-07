@@ -64,12 +64,12 @@ export function App() {
       )}
       {repeat(loadCount, index => {
         const chapter = currentChapter + index
+        const setChapter = index > 0 ? () => setCurrentChapter(chapter) : undefined
         return (
           <Chapter
             key={chapter}
             chapter={chapter}
-            isTopChapter={index === 0}
-            setChapter={() => setCurrentChapter(chapter)}
+            setChapter={setChapter}
             lines={chapters[index]}
           />
         )

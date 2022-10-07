@@ -1,18 +1,17 @@
 interface Props {
   chapter: number
-  isTopChapter: boolean
-  setChapter(): void
+  setChapter?(): void
   lines?: string[]
 }
 
-export function Chapter({ chapter, isTopChapter, lines, setChapter }: Props) {
+export function Chapter({ chapter, lines, setChapter }: Props) {
   if (!lines) lines = [`Loading...`]
 
   return (
     <div className="chapter" data-chapter={chapter}>
       <p data-pos={`${chapter}-0`}>
         <span className="huge">Chapter {chapter} </span>
-        {!isTopChapter && (
+        {setChapter && (
           <a
             aria-hidden
             className="small no-wrap"
