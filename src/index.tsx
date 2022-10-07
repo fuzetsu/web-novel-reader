@@ -1,3 +1,4 @@
+// import 'preact/debug'
 import { App } from 'cmp/App'
 import { render } from 'preact'
 import './styles.css'
