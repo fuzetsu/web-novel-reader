@@ -14,6 +14,7 @@ const fetchDoc = (url: string) =>
 const TTS_BREAK_FILTER: [RegExp, string][] = [
   ['hu', 'who'],
   ['pue', 'poo'],
+  ['puhe', 'poo hey'],
   ['sou', 'so']
 ].map(([word, rep]) => [new RegExp(`\\b${word}\\b`, 'gi'), rep])
 
