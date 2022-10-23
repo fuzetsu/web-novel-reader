@@ -25,7 +25,8 @@ export function useNovelState() {
 
   const promptNovel = () => {
     const userInput = prompt('Edit novelfull ID', novelId || '')
-    const newNovelId = (userInput || novelId || '').toLowerCase().replace(/\s+/g, '-')
+    if (!userInput?.trim()) return
+    const newNovelId = userInput.toLowerCase().replace(/\s+/g, '-')
     location.hash = `/${newNovelId}/1`
   }
 
