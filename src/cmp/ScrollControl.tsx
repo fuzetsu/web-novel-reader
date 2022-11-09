@@ -29,7 +29,7 @@ export function ScrollControl() {
     } else {
       const nextIndex = chapters
         .reverse()
-        .findIndex(chapter => chapter.getBoundingClientRect().top < 0)
+        .findIndex(chapter => chapter.getBoundingClientRect().top < -10)
       const nextChapter: Element | undefined = chapters[nextIndex]
       if (!nextChapter || nextIndex + 1 - chapters.length === 0) scrollToTop()
       else nextChapter.scrollIntoView()
