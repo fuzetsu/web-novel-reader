@@ -35,3 +35,6 @@ export const preventDefault = (fn: () => void) => (evt: Event) => {
   evt.preventDefault()
   fn()
 }
+
+export const subURI = (uri: string, subs: { [key: string]: string | number }) =>
+  Object.entries(subs).reduce((acc, [k, v]) => acc.replace(':' + k, encodeURIComponent(v)), uri)

@@ -1,4 +1,4 @@
-import { qq } from './util'
+import { qq, subURI } from './util'
 
 const CORS = 'https://cors.fuz.workers.dev/?'
 
@@ -20,17 +20,41 @@ const TTS_BREAK_FILTER: [RegExp, string][] = [
 
 const chapterCache = new Map<string, string[]>()
 
+const SERVER_CONF = {
+  'novel-full': {
+    url: 'https://novelfull.com/:novelId/chapter-:chapter.html',
+    sel: '#chapter-content p'
+  },
+  'divine-dao-library': {
+    url: 'https://divinedaolibrary.com/:novelId-chapter-:chapter',
+    sel: '.entry-content > p:not([style="text-align:center"])'
+  }
+} as const
+type Server = keyof typeof SERVER_CONF
+
+// override by novel-id what server is used, eventually user should be able to pick
+const SERVER_OVERRIDE: Record<string, Server | undefined> = {
+  'humanitys-great-sage': 'divine-dao-library'
+}
+
 export const fetchChapter = async (novelId: string, chapter: number) => {
   const cacheKey = novelId + chapter
   const cachedChapter = chapterCache.get(cacheKey)
   if (cachedChapter) return cachedChapter
-  const doc = await fetchDoc(`https://novelfull.com/${novelId}/chapter-${chapter}.html`)
-  const lines = qq('#chapter-content p', doc).map(paragraph =>
-    TTS_BREAK_FILTER.reduce(
-      (acc, [regex, rep]) => acc.replace(regex, rep),
-      paragraph.textContent ?? ''
+  const server: Server = SERVER_OVERRIDE[novelId] ?? 'novel-full'
+  const conf = SERVER_CONF[server]
+  const url = subURI(conf.url, { novelId, chapter })
+  const doc = await fetchDoc(url)
+  // remove unwanted content from doc before grabbing lines
+  qq('script,style', doc).forEach(x => x.remove())
+  const lines = qq(conf.sel, doc)
+    .map(paragraph =>
+      TTS_BREAK_FILTER.reduce(
+        (acc, [regex, rep]) => acc.replace(regex, rep),
+        paragraph.textContent ?? ''
+      ).trim()
     )
-  )
+    .filter(Boolean)
   chapterCache.set(cacheKey, lines)
   return lines
 }
