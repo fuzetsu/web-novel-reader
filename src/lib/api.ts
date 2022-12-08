@@ -28,13 +28,18 @@ const SERVER_CONF = {
   'divine-dao-library': {
     url: 'https://divinedaolibrary.com/:novelId-chapter-:chapter',
     sel: '.entry-content > p:not([style="text-align:center"])'
+  },
+  'wuxiaworld-eu': {
+    url: 'https://www.wuxiaworld.eu/chapter/:novelId-:chapter',
+    sel: '#chapterText'
   }
 } as const
 type Server = keyof typeof SERVER_CONF
 
 // override by novel-id what server is used, eventually user should be able to pick
 const SERVER_OVERRIDE: Record<string, Server | undefined> = {
-  'humanitys-great-sage': 'divine-dao-library'
+  'humanitys-great-sage': 'divine-dao-library',
+  'world-of-cultivation': 'wuxiaworld-eu'
 }
 
 export const fetchChapter = async (novelId: string, chapter: number) => {
