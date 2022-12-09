@@ -1,4 +1,4 @@
-import { Server, SERVER_NAMES } from 'lib/api'
+import { getServerOverride, Server, SERVER_NAMES } from 'lib/api'
 import { useState } from 'preact/hooks'
 import { Modal } from './Modal'
 
@@ -21,6 +21,8 @@ export function ChooseNovelModal(props: Props) {
     onClose()
   }
 
+  const override = getServerOverride(cleanNovelId)
+
   return (
     <Modal open onClose={onClose}>
       <div
@@ -37,18 +39,23 @@ export function ChooseNovelModal(props: Props) {
           />
         </div>
         <div className="form-group">
-          <label>Server</label>
-          <select
-            value={server}
-            onChange={e => {
-              const select = e.target as HTMLSelectElement
-              setServer(select.options[select.selectedIndex].value as Server)
-            }}
-          >
-            {SERVER_NAMES.map(name => (
-              <option value={name}>{name}</option>
-            ))}
-          </select>
+          <label>Server {override ? '(overridden)' : ''}</label>
+          {override ? (
+            <code>{override}</code>
+          ) : (
+            <select
+              value={server}
+              disabled={!!override}
+              onChange={e => {
+                const select = e.target as HTMLSelectElement
+                setServer(select.options[select.selectedIndex].value as Server)
+              }}
+            >
+              {SERVER_NAMES.map(name => (
+                <option value={name}>{name}</option>
+              ))}
+            </select>
+          )}
         </div>
         <button onClick={handleChange}>Save</button>
       </div>

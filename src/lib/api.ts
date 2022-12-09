@@ -42,6 +42,7 @@ const SERVER_OVERRIDE: Record<string, Server | undefined> = {
   'humanitys-great-sage': 'divine-dao-library',
   'world-of-cultivation': 'wuxiaworld-eu'
 }
+export const getServerOverride = (novelId: string) => SERVER_OVERRIDE[novelId]
 
 const chapterCache = new Map<string, string[]>()
 
@@ -49,7 +50,7 @@ export const fetchChapter = async (defaultServer: Server, novelId: string, chapt
   const cacheKey = defaultServer + novelId + chapter
   const cachedChapter = chapterCache.get(cacheKey)
   if (cachedChapter) return cachedChapter
-  const server: Server = SERVER_OVERRIDE[novelId] ?? defaultServer
+  const server: Server = getServerOverride(novelId) ?? defaultServer
   const conf = SERVER_CONF[server]
   const url = subURI(conf.url, { novelId, chapter })
   const doc = await fetchDoc(url)
