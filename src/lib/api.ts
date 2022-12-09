@@ -18,8 +18,6 @@ const TTS_BREAK_FILTER: [RegExp, string][] = [
   ['sou', 'so']
 ].map(([word, rep]) => [new RegExp(`\\b${word}\\b`, 'gi'), rep])
 
-const chapterCache = new Map<string, string[]>()
-
 const SERVER_CONF = {
   'novel-full': {
     url: 'https://novelfull.com/:novelId/chapter-:chapter.html',
@@ -34,7 +32,10 @@ const SERVER_CONF = {
     sel: '#chapterText'
   }
 } as const
-type Server = keyof typeof SERVER_CONF
+
+export type Server = keyof typeof SERVER_CONF
+
+export const SERVER_NAMES = Object.keys(SERVER_CONF) as Server[]
 
 // override by novel-id what server is used, eventually user should be able to pick
 const SERVER_OVERRIDE: Record<string, Server | undefined> = {
@@ -42,11 +43,13 @@ const SERVER_OVERRIDE: Record<string, Server | undefined> = {
   'world-of-cultivation': 'wuxiaworld-eu'
 }
 
-export const fetchChapter = async (novelId: string, chapter: number) => {
-  const cacheKey = novelId + chapter
+const chapterCache = new Map<string, string[]>()
+
+export const fetchChapter = async (defaultServer: Server, novelId: string, chapter: number) => {
+  const cacheKey = defaultServer + novelId + chapter
   const cachedChapter = chapterCache.get(cacheKey)
   if (cachedChapter) return cachedChapter
-  const server: Server = SERVER_OVERRIDE[novelId] ?? 'novel-full'
+  const server: Server = SERVER_OVERRIDE[novelId] ?? defaultServer
   const conf = SERVER_CONF[server]
   const url = subURI(conf.url, { novelId, chapter })
   const doc = await fetchDoc(url)

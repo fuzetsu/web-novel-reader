@@ -1,4 +1,4 @@
-import { fetchChapter } from 'lib/api'
+import { fetchChapter, Server } from 'lib/api'
 import { useLocationHash, usePersistedState, useThrottledScroll } from 'lib/hooks'
 import { delayWithCancel, promiseWithCancel, q, qq, repeat, scrollToTop } from 'lib/util'
 import { useEffect, useMemo, useState } from 'preact/hooks'
@@ -12,6 +12,8 @@ export function useNovelState() {
     return [novelId || null, Number(currentChapterStr) || 1]
   }, [hash])
 
+  const setNovelId = (novelId: string) => (location.hash = `/${novelId}/1`)
+
   const novelKey = (key: string) => `${novelId}-${key}`
 
   const [newestChapter, setNewestChapter] = usePersistedState(novelKey('cur-chap'), 1)
@@ -19,15 +21,10 @@ export function useNovelState() {
     setNewestChapter(Math.max(newestChapter, currentChapter))
   }, [currentChapter])
 
+  const [server, setServer] = usePersistedState<Server>(novelKey('server'), 'novel-full')
+
   const setCurrentChapter = (chapter: number) => {
     location.hash = `/${novelId}/${chapter}`
-  }
-
-  const promptNovel = () => {
-    const userInput = prompt('Edit novelfull ID', novelId || '')
-    if (!userInput?.trim()) return
-    const newNovelId = userInput.toLowerCase().replace(/\s+/g, '-')
-    location.hash = `/${newNovelId}/1`
   }
 
   const novelName = useMemo(
@@ -50,13 +47,15 @@ export function useNovelState() {
       promiseWithCancel(
         Promise.all(
           repeat(loadCount, index =>
-            fetchChapter(novelId, currentChapter + index).catch(() => ['Error fetching chapter.'])
+            fetchChapter(server, novelId, currentChapter + index).catch(() => [
+              'Error fetching chapter.'
+            ])
           )
         ),
         setChapters
       )
     )
-  }, [novelId, currentChapter, loadCount])
+  }, [novelId, currentChapter, loadCount, server])
 
   // restore scroll position when chapters load
   const [lastPos, setLastPos] = usePersistedState<string | null>(novelKey('last-pos'), null)
@@ -77,7 +76,9 @@ export function useNovelState() {
   return {
     novelId,
     novelName,
-    promptNovel,
+    setNovelId,
+    server,
+    setServer,
     currentChapter,
     setCurrentChapter,
     newestChapter,

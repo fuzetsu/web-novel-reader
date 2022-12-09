@@ -1,4 +1,6 @@
+import { ChooseNovelModal } from 'cmp/ChooseNovelModal'
 import { preventDefault, repeat, scrollToTop } from 'lib/util'
+import { useState } from 'preact/hooks'
 import { Chapter } from '../Chapter'
 import { CurrentChapterControl } from '../CurrentChapterControl'
 import { LoadCountControl } from '../LoadCountControl'
@@ -7,9 +9,11 @@ import { useNovelState } from './hooks'
 
 export function App() {
   const {
+    server,
+    setServer,
     novelId,
+    setNovelId,
     novelName,
-    promptNovel,
     currentChapter,
     setCurrentChapter,
     newestChapter,
@@ -19,7 +23,6 @@ export function App() {
     chapters
   } = useNovelState()
 
-  const changeNovel = preventDefault(promptNovel)
   const resumeNewestChapter = preventDefault(() => setCurrentChapter(newestChapter))
   const clearResume = preventDefault(() => setNewestChapter(currentChapter))
 
@@ -33,53 +36,76 @@ export function App() {
     </p>
   )
 
+  const [chooseNovelOpen, setChooseNovelOpen] = useState(false)
+  const toggleChooseNovel = preventDefault(() => setChooseNovelOpen(!chooseNovelOpen))
+
+  const changeNovelModal = chooseNovelOpen && (
+    <ChooseNovelModal
+      novelId={novelId}
+      server={server}
+      onChoose={(novelId, server) => {
+        if (novelId) {
+          setNovelId(novelId)
+          setServer(server)
+        }
+        setChooseNovelOpen(false)
+      }}
+    />
+  )
+
   if (!novelId) {
     return (
-      <h1 className="center">
-        <button onClick={changeNovel}>Choose novel</button>
-      </h1>
+      <>
+        {changeNovelModal}
+        <h1 className="center">
+          <button onClick={toggleChooseNovel}>Choose novel</button>
+        </h1>
+      </>
     )
   }
 
   return (
-    <main className="app">
-      <div aria-hidden className="center">
-        <h1>
-          <a href="" onClick={changeNovel}>
-            {novelName}
-          </a>
-        </h1>
-        <LoadCountControl loadCount={loadCount} onChange={setLoadCount} />
-      </div>
-      {chapterControls}
-      {newestChapter > currentChapter && (
-        <p aria-hidden className="center">
-          <a href="" onClick={resumeNewestChapter}>
-            Resume {newestChapter}
-          </a>{' '}
-          <a href="" onClick={clearResume}>
-            (reset)
-          </a>
-        </p>
-      )}
-      {repeat(loadCount, index => {
-        const chapter = currentChapter + index
-        const setChapter = index > 0 ? () => setCurrentChapter(chapter) : undefined
-        return (
-          <Chapter
-            key={chapter}
-            chapter={chapter}
-            setChapter={setChapter}
-            lines={chapters[index]}
-          />
-        )
-      })}
-      {chapterControls}
-      <div className="screenreader-only">End of content. Thanks for reading pal.</div>
-      <div aria-hidden className="center">
-        <button onClick={scrollToTop}>Scroll to the top</button>
-      </div>
-      <ScrollControl />
-    </main>
+    <>
+      {changeNovelModal}
+      <main className="app">
+        <div aria-hidden className="center">
+          <h1>
+            <a href="" onClick={toggleChooseNovel}>
+              {novelName}
+            </a>
+          </h1>
+          <LoadCountControl loadCount={loadCount} onChange={setLoadCount} />
+        </div>
+        {chapterControls}
+        {newestChapter > currentChapter && (
+          <p aria-hidden className="center">
+            <a href="" onClick={resumeNewestChapter}>
+              Resume {newestChapter}
+            </a>{' '}
+            <a href="" onClick={clearResume}>
+              (reset)
+            </a>
+          </p>
+        )}
+        {repeat(loadCount, index => {
+          const chapter = currentChapter + index
+          const setChapter = index > 0 ? () => setCurrentChapter(chapter) : undefined
+          return (
+            <Chapter
+              key={chapter}
+              chapter={chapter}
+              setChapter={setChapter}
+              lines={chapters[index]}
+            />
+          )
+        })}
+        {chapterControls}
+        <div className="screenreader-only">End of content. Thanks for reading pal.</div>
+        <div aria-hidden className="center">
+          <button onClick={scrollToTop}>Scroll to the top</button>
+        </div>
+        <ScrollControl />
+      </main>
+    </>
   )
 }

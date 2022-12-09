@@ -1,3 +1,5 @@
+export const p = <T>(first: T, ...rest: unknown[]) => (console.log(first, ...rest), first)
+
 export const qq = <T extends Element>(query: string, context: Element | Document = document) =>
   Array.from(context.querySelectorAll<T>(query))
 export const q = <T extends Element>(query: string, context: Element | Document = document) =>

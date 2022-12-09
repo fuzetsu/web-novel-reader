@@ -33,13 +33,16 @@ button {
   cursor: pointer;
 }
 
+button, input, label {
+  margin: 4px;
+}
+
 button,
-input {
+input, select {
   padding: 8px 12px;
   font-size: inherit;
   font-family: inherit;
   border: none;
-  margin: 4px;
   color: black;
   background: #efefef;
   border-radius: 4px;
@@ -90,4 +93,31 @@ input.error {
   width: 1px;
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
+}
+
+.modal-overlay {
+  inset: 0;
+  position: fixed;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  box-shadow: 0px 0px 3px;
+  background: black;
+  width: auto;
+  height: auto;
+  overflow: auto;
+  margin: 4px;
+  padding: 20px;
+}
+
+.form-group:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
 }
