@@ -12,7 +12,9 @@ export function useNovelState() {
     return [novelId || null, Number(currentChapterStr) || 1]
   }, [hash])
 
-  const setNovelId = (novelId: string) => (location.hash = `/${novelId}/1`)
+  const setNovelId = (newNovelId: string) => {
+    if (newNovelId !== novelId) location.hash = `/${newNovelId}/1`
+  }
 
   const novelKey = (key: string) => `${novelId}-${key}`
 

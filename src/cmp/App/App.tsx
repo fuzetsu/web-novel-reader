@@ -43,12 +43,12 @@ export function App() {
     <ChooseNovelModal
       novelId={novelId}
       server={server}
-      onChoose={(novelId, server) => {
+      onClose={() => setChooseNovelOpen(false)}
+      onChange={(novelId, server) => {
         if (novelId) {
           setNovelId(novelId)
           setServer(server)
         }
-        setChooseNovelOpen(false)
       }}
     />
   )
