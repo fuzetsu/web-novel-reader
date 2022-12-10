@@ -20,7 +20,9 @@ export function App() {
     setNewestChapter,
     loadCount,
     setLoadCount,
-    chapters
+    chapters,
+    setFilter,
+    filter
   } = useNovelState()
 
   const resumeNewestChapter = preventDefault(() => setCurrentChapter(newestChapter))
@@ -43,11 +45,13 @@ export function App() {
     <ChooseNovelModal
       novelId={novelId}
       server={server}
+      filter={filter}
       onClose={() => setChooseNovelOpen(false)}
-      onChange={(novelId, server) => {
+      onChange={(server, novelId, filter) => {
         if (novelId) {
           setNovelId(novelId)
           setServer(server)
+          setFilter(filter)
         }
       }}
     />

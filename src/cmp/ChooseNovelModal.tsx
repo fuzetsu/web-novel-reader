@@ -5,19 +5,21 @@ import { Modal } from './Modal'
 interface Props {
   novelId: string | null
   server: Server
-  onChange(novelId: string | null, server: Server): void
+  filter: string
+  onChange(server: Server, novelId: string | null, filter: string): void
   onClose(): void
 }
 
 export function ChooseNovelModal(props: Props) {
   const { onChange, onClose } = props
-  const [novelId, setNovelId] = useState(props.novelId ?? '')
   const [server, setServer] = useState(props.server)
+  const [novelId, setNovelId] = useState(props.novelId ?? '')
+  const [filter, setFilter] = useState(props.filter)
 
   const cleanNovelId = novelId.toLowerCase().replace(/\s+/g, '-')
 
   const handleChange = () => {
-    onChange(cleanNovelId, server)
+    onChange(server, cleanNovelId, filter)
     onClose()
   }
 
@@ -45,7 +47,6 @@ export function ChooseNovelModal(props: Props) {
           ) : (
             <select
               value={server}
-              disabled={!!override}
               onChange={e => {
                 const select = e.target as HTMLSelectElement
                 setServer(select.options[select.selectedIndex].value as Server)
@@ -56,6 +57,16 @@ export function ChooseNovelModal(props: Props) {
               ))}
             </select>
           )}
+        </div>
+        <div className="form-group">
+          <label>Text filter</label>
+          <textarea
+            value={filter}
+            style={{ width: '100%' }}
+            rows={10}
+            onChange={e => setFilter((e.target as HTMLTextAreaElement).value)}
+            placeholder="e.g. words to match|replacement"
+          />
         </div>
         <button onClick={handleChange}>Save</button>
       </div>

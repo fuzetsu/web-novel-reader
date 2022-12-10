@@ -10,13 +10,15 @@ const fetchDoc = (url: string) =>
     .then(res => (res.ok ? res.text() : Promise.reject()))
     .then(html => new DOMParser().parseFromString(html, 'text/html'))
 
+const makeFilterRegex = (word: string) => new RegExp(`\\b${word}\\b`, 'gi')
+
 // these words by themselves in a paragraph break ios speak screen
 const TTS_BREAK_FILTER: [RegExp, string][] = [
   ['hu', 'who'],
   ['pue', 'poo'],
   ['puhe', 'poo hey'],
   ['sou', 'so']
-].map(([word, rep]) => [new RegExp(`\\b${word}\\b`, 'gi'), rep])
+].map(([word, rep]) => [makeFilterRegex(word), rep])
 
 const SERVER_CONF = {
   'novel-full': {
@@ -46,8 +48,13 @@ export const getServerOverride = (novelId: string) => SERVER_OVERRIDE[novelId]
 
 const chapterCache = new Map<string, string[]>()
 
-export const fetchChapter = async (defaultServer: Server, novelId: string, chapter: number) => {
-  const cacheKey = defaultServer + novelId + chapter
+export const fetchChapter = async (
+  defaultServer: Server,
+  novelId: string,
+  chapter: number,
+  filter: string[][]
+) => {
+  const cacheKey = defaultServer + novelId + chapter + filter
   const cachedChapter = chapterCache.get(cacheKey)
   if (cachedChapter) return cachedChapter
   const server: Server = getServerOverride(novelId) ?? defaultServer
@@ -56,12 +63,16 @@ export const fetchChapter = async (defaultServer: Server, novelId: string, chapt
   const doc = await fetchDoc(url)
   // remove unwanted content from doc before grabbing lines
   qq('script,style', doc).forEach(x => x.remove())
+
+  const cleanFilters = filter
+    .filter(([match]) => match)
+    .map<[RegExp, string]>(([match, rep]) => [makeFilterRegex(match), rep])
+
   const lines = qq(conf.sel, doc)
     .map(paragraph =>
-      TTS_BREAK_FILTER.reduce(
-        (acc, [regex, rep]) => acc.replace(regex, rep),
-        paragraph.textContent ?? ''
-      ).trim()
+      TTS_BREAK_FILTER.concat(cleanFilters)
+        .reduce((acc, [regex, rep]) => acc.replace(regex, rep), paragraph.textContent ?? '')
+        .trim()
     )
     .filter(Boolean)
   chapterCache.set(cacheKey, lines)
