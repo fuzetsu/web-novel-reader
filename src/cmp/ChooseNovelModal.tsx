@@ -29,7 +29,7 @@ export function ChooseNovelModal(props: Props) {
     <Modal open onClose={onClose}>
       <div
         onKeyDown={e => {
-          if (e.key === 'Enter') handleChange()
+          if (e.key === 'Enter' && (e.target as HTMLElement).nodeName !== 'TEXTAREA') handleChange()
         }}
       >
         <div className="form-group">
