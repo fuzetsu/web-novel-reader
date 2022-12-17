@@ -4,15 +4,17 @@ import { qq, scrollToBottom, scrollToTop } from '../lib/util'
 
 export function ScrollControl() {
   const [scrollingDown, setScrollingDown] = useState(true)
+  const [scrollPercentage, setScrollPercentage] = useState('0')
+
   const lastScroll = useRef(0)
   useScroll(() => {
     const scrollElem = document.scrollingElement
     if (scrollElem) {
-      const curScroll = scrollElem.scrollTop
+      const { scrollHeight, scrollTop } = scrollElem
+      const curScroll = scrollTop + window.innerHeight
+      setScrollPercentage(((curScroll / scrollHeight) * 100).toFixed(0))
       setScrollingDown(
-        (curScroll > lastScroll.current &&
-          curScroll < scrollElem.scrollHeight - window.innerHeight) ||
-          curScroll === 0
+        (curScroll > lastScroll.current && curScroll < scrollHeight) || scrollTop === 0
       )
       lastScroll.current = curScroll
     }
@@ -38,7 +40,7 @@ export function ScrollControl() {
 
   return (
     <button aria-hidden className="scroll-control" onClick={scrollToNextChapter}>
-      {scrollingDown ? '\u25bc' : '\u25b2'}
+      {scrollingDown ? '\u25bc' : '\u25b2'} {scrollPercentage}
     </button>
   )
 }

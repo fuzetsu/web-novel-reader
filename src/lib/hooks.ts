@@ -98,6 +98,9 @@ export function useLocationHash() {
 
 export function useAutoFocusRef<T extends HTMLElement>() {
   const ref = useRef<T>(null)
-  useEffect(() => ref.current?.focus(), [])
+  useEffect(() => {
+    const id = requestAnimationFrame(() => ref.current?.focus())
+    return () => cancelAnimationFrame(id)
+  }, [])
   return ref
 }
