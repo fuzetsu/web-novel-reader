@@ -40,3 +40,6 @@ export const preventDefault = (fn: () => void) => (evt: Event) => {
 
 export const subURI = (uri: string, subs: { [key: string]: string | number }) =>
   Object.entries(subs).reduce((acc, [k, v]) => acc.replace(':' + k, encodeURIComponent(v)), uri)
+
+export const classNames = (...names: (string | false | undefined)[]): string =>
+  names.filter(Boolean).join(' ')

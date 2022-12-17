@@ -1,3 +1,4 @@
+import { classNames } from 'lib/util'
 import { useEffect, useState } from 'preact/hooks'
 
 interface Props {
@@ -24,13 +25,11 @@ export function CurrentChapterControl({ chapter, loadCount, onChange }: Props) {
 
   return (
     <div>
-      {chapter > 1 && (
-        <button onClick={() => handleChange(previousChapter)}>
-          {loadCount > 1 && previousChapter} &#8592;
-        </button>
-      )}
+      <button disabled={chapter <= 1} onClick={() => handleChange(previousChapter)}>
+        {loadCount > 1 && previousChapter} &#8592;
+      </button>
       <input
-        className={inputError ? 'error' : ''}
+        className={classNames('current-chapter-control__input', inputError && 'error')}
         value={chapterInput}
         size={5}
         onChange={e => {

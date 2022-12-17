@@ -11,12 +11,12 @@ export function Modal({ open, onClose, children }: Props) {
 
   return (
     <div
-      className="modal-overlay"
+      className="modal"
       onClick={e =>
-        (e.target as HTMLDivElement | undefined)?.className === 'modal-overlay' ? onClose?.() : null
+        (e.target as HTMLDivElement | undefined)?.className === 'modal' ? onClose?.() : null
       }
     >
-      <div className="modal">{children}</div>
+      <div className="modal__dialog">{children}</div>
     </div>
   )
 }

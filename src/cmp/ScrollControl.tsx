@@ -37,7 +37,7 @@ export function ScrollControl() {
   }
 
   return (
-    <button aria-hidden className="next-chapter-action" onClick={scrollToNextChapter}>
+    <button aria-hidden className="scroll-control" onClick={scrollToNextChapter}>
       {scrollingDown ? '\u25bc' : '\u25b2'}
     </button>
   )

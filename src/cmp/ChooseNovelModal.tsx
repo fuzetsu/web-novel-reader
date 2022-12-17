@@ -1,4 +1,5 @@
 import { getServerOverride, Server, SERVER_NAMES } from 'lib/api'
+import { useAutoFocusRef } from 'lib/hooks'
 import { useState } from 'preact/hooks'
 import { Modal } from './Modal'
 
@@ -18,12 +19,16 @@ export function ChooseNovelModal(props: Props) {
 
   const cleanNovelId = novelId.toLowerCase().replace(/\s+/g, '-')
 
+  const formDirty = server !== props.server || novelId !== props.novelId || filter !== props.filter
+
   const handleChange = () => {
     onChange(server, cleanNovelId, filter)
     onClose()
   }
 
   const override = getServerOverride(cleanNovelId)
+
+  const novelIdInputRef = useAutoFocusRef<HTMLInputElement>()
 
   return (
     <Modal open onClose={onClose}>
@@ -35,7 +40,7 @@ export function ChooseNovelModal(props: Props) {
         <div className="form-group">
           <label>Novel ID</label>
           <input
-            autoFocus
+            ref={novelIdInputRef}
             value={novelId}
             onInput={e => setNovelId((e.target as HTMLInputElement | undefined)?.value ?? '')}
           />
@@ -64,11 +69,16 @@ export function ChooseNovelModal(props: Props) {
             value={filter}
             style={{ width: '100%' }}
             rows={10}
-            onChange={e => setFilter((e.target as HTMLTextAreaElement).value)}
+            onInput={e => setFilter((e.target as HTMLTextAreaElement).value)}
             placeholder="e.g. words to match|replacement"
           />
         </div>
-        <button onClick={handleChange}>Save</button>
+        <div className="button-group">
+          <button disabled={!formDirty} onClick={handleChange}>
+            Save
+          </button>
+          <button onClick={onClose}>Cancel</button>
+        </div>
       </div>
     </Modal>
   )
