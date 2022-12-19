@@ -1,4 +1,5 @@
 import { ChooseNovelModal } from 'cmp/ChooseNovelModal'
+import { RecentNovels } from 'cmp/RecentNovels'
 import { preventDefault, repeat, scrollToTop } from 'lib/util'
 import { useState } from 'preact/hooks'
 import { Chapter } from '../Chapter'
@@ -9,20 +10,21 @@ import { useNovelState } from './hooks'
 
 export function App() {
   const {
-    server,
-    setServer,
-    novelId,
-    setNovelId,
-    novelName,
-    currentChapter,
-    setCurrentChapter,
-    newestChapter,
-    setNewestChapter,
-    loadCount,
-    setLoadCount,
     chapters,
+    currentChapter,
+    filter,
+    loadCount,
+    newestChapter,
+    novelId,
+    novelName,
+    recentNovels,
+    server,
+    setCurrentChapter,
     setFilter,
-    filter
+    setLoadCount,
+    setNewestChapter,
+    setNovelId,
+    setServer
   } = useNovelState()
 
   const resumeNewestChapter = preventDefault(() => setCurrentChapter(newestChapter))
@@ -60,10 +62,11 @@ export function App() {
   if (!novelId) {
     return (
       <>
+        <RecentNovels recentNovels={recentNovels} />
         {changeNovelModal}
-        <h1 className="center">
-          <button onClick={toggleChooseNovel}>Choose novel</button>
-        </h1>
+        <div className="center">
+          <button onClick={toggleChooseNovel}>New novel</button>
+        </div>
       </>
     )
   }
@@ -73,6 +76,9 @@ export function App() {
       {changeNovelModal}
       <main className="app">
         <div aria-hidden className="center">
+          <h3>
+            <a href="#/">Home</a>
+          </h3>
           <h1>
             <a href="" onClick={toggleChooseNovel}>
               {novelName}

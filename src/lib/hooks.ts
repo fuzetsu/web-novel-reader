@@ -1,4 +1,13 @@
-import { Inputs, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'preact/hooks'
+import {
+  Inputs,
+  StateUpdater,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState
+} from 'preact/hooks'
 
 export function useScroll(onScroll: () => void) {
   const onScrollRef = useUpdatingRef(onScroll)
@@ -60,6 +69,7 @@ export function useTimeout(delay: number, fn: () => void, deps: Inputs) {
 }
 
 export function usePersistedState<T>(key: string, initialValue: T) {
+  const redraw = useRedraw()
   const savedValue = useMemo<T>(() => {
     try {
       const saved = localStorage.getItem(key)
@@ -68,22 +78,30 @@ export function usePersistedState<T>(key: string, initialValue: T) {
       return initialValue
     }
   }, [key])
-  useEffect(() => setState(savedValue), [savedValue])
-  const [state, setState] = useState(savedValue)
+  const stateRef = useRef(savedValue)
+
+  const lastSaved = useRef(savedValue)
+  if (lastSaved.current !== savedValue) stateRef.current = savedValue
+  lastSaved.current = savedValue
 
   const persist = useThrottledFn(500, (newState: T) =>
     localStorage.setItem(key, JSON.stringify(newState))
   )
 
-  const update = useCallback(
-    (newState: T) => {
+  const update = useCallback<StateUpdater<T>>(
+    stateUpdate => {
+      const newState =
+        typeof stateUpdate === 'function'
+          ? (stateUpdate as (prev: T) => T)(stateRef.current)
+          : stateUpdate
       persist(newState)
-      setState(newState)
+      stateRef.current = newState
+      redraw()
     },
-    [persist]
+    [persist, redraw]
   )
 
-  return [state, update] as const
+  return [stateRef.current, update] as const
 }
 
 export function useLocationHash() {

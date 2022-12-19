@@ -20,7 +20,7 @@ export function useNovelState() {
 
   const [newestChapter, setNewestChapter] = usePersistedState(novelKey('cur-chap'), 1)
   useEffect(() => {
-    setNewestChapter(Math.max(newestChapter, currentChapter))
+    if (novelId) setNewestChapter(newest => Math.max(newest, currentChapter))
   }, [currentChapter])
 
   const [server, setServer] = usePersistedState<Server>(novelKey('server'), 'novel-full')
@@ -80,20 +80,26 @@ export function useNovelState() {
     if (pos) localStorage.setItem(novelKey('last-pos'), JSON.stringify(pos))
   })
 
+  const [recentNovels, setRecentNovels] = usePersistedState<string[]>('recent-novels', [])
+  useEffect(() => {
+    if (novelId) setRecentNovels([novelId, ...recentNovels.filter(id => id !== novelId)])
+  }, [novelId])
+
   return {
+    chapters,
+    currentChapter,
+    filter,
+    loadCount,
+    newestChapter,
     novelId,
     novelName,
-    setNovelId,
+    recentNovels,
     server,
-    setServer,
-    currentChapter,
     setCurrentChapter,
-    newestChapter,
-    setNewestChapter,
-    loadCount,
+    setFilter,
     setLoadCount,
-    chapters,
-    filter,
-    setFilter
+    setNewestChapter,
+    setNovelId,
+    setServer
   }
 }
