@@ -30,56 +30,59 @@ export function ChooseNovelModal(props: Props) {
 
   const novelIdInputRef = useAutoFocusRef<HTMLInputElement>()
 
-  return (
-    <Modal open onClose={onClose}>
-      <div
-        onKeyDown={e => {
-          if (e.key === 'Enter' && (e.target as HTMLElement).nodeName !== 'TEXTAREA') handleChange()
-        }}
-      >
-        <div className="form-group">
-          <label>Novel ID</label>
-          <input
-            ref={novelIdInputRef}
-            value={novelId}
-            onInput={e => setNovelId((e.target as HTMLInputElement | undefined)?.value ?? '')}
-          />
-        </div>
-        <div className="form-group">
-          <label>Server {override ? '(overridden)' : ''}</label>
-          {override ? (
-            <code>{override}</code>
-          ) : (
-            <select
-              value={server}
-              onChange={e => {
-                const select = e.target as HTMLSelectElement
-                setServer(select.options[select.selectedIndex].value as Server)
-              }}
-            >
-              {SERVER_NAMES.map(name => (
-                <option value={name}>{name}</option>
-              ))}
-            </select>
-          )}
-        </div>
-        <div className="form-group">
-          <label>Text filter</label>
-          <textarea
-            value={filter}
-            style={{ width: '100%' }}
-            rows={10}
-            onInput={e => setFilter((e.target as HTMLTextAreaElement).value)}
-            placeholder="e.g. words to match|replacement"
-          />
-        </div>
-        <div className="button-group">
-          <button disabled={!formDirty} onClick={handleChange}>
-            Save
-          </button>
-          <button onClick={onClose}>Cancel</button>
-        </div>
+  const modalContent = (
+    <div
+      onKeyDown={e => {
+        if (e.key === 'Enter' && (e.target as HTMLElement).nodeName !== 'TEXTAREA') handleChange()
+      }}
+    >
+      <div className="form-group">
+        <label>Novel ID</label>
+        <input
+          ref={novelIdInputRef}
+          value={novelId}
+          onInput={e => setNovelId((e.target as HTMLInputElement | undefined)?.value ?? '')}
+        />
       </div>
-    </Modal>
+      <div className="form-group">
+        <label>Server {override ? '(overridden)' : ''}</label>
+        {override ? (
+          <code>{override}</code>
+        ) : (
+          <select
+            value={server}
+            onChange={e => {
+              const select = e.target as HTMLSelectElement
+              setServer(select.options[select.selectedIndex].value as Server)
+            }}
+          >
+            {SERVER_NAMES.map(name => (
+              <option value={name}>{name}</option>
+            ))}
+          </select>
+        )}
+      </div>
+      <div className="form-group">
+        <label>Text filter</label>
+        <textarea
+          value={filter}
+          style={{ width: '100%' }}
+          rows={10}
+          onInput={e => setFilter((e.target as HTMLTextAreaElement).value)}
+          placeholder="e.g. words to match|replacement"
+        />
+      </div>
+    </div>
   )
+
+  const modalFooter = (
+    <div className="button-group">
+      <button disabled={!formDirty} onClick={handleChange}>
+        Save
+      </button>
+      <button onClick={onClose}>Cancel</button>
+    </div>
+  )
+
+  return <Modal open onClose={onClose} content={modalContent} footer={modalFooter} />
 }

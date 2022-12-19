@@ -46,14 +46,6 @@ button:disabled {
 
 button,
 input,
-label,
-code,
-textarea {
-  margin: 4px;
-}
-
-button,
-input,
 select,
 textarea {
   padding: 8px 12px;
@@ -74,7 +66,7 @@ input.error {
 
 .button-group {
   display: flex;
-  gap: 5px;
+  gap: 8px;
 }
 
 .center {
@@ -105,8 +97,16 @@ input.error {
   margin-bottom: 20px;
 }
 
-.form-group label {
+.form-group {
+  padding: 4px;
+}
+
+.form-group > label {
   display: block;
+}
+
+.form-group > input {
+  width: 100%;
 }
 
 /* APP */
@@ -149,12 +149,34 @@ input.error {
   min-width: min(500px, 90%);
   max-width: 90%;
   max-height: 90%;
-  overscroll-behavior-block: contain;
-  overflow: auto;
   height: auto;
-  overflow: auto;
   margin: 4px;
-  padding: 20px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    'header'
+    'content'
+    'footer';
+}
+
+.modal__header,
+.modal__footer,
+.modal__content {
+  padding: 16px;
+}
+
+.modal__header {
+  grid-area: header;
+}
+
+.modal__content {
+  grid-area: content;
+  overscroll-behavior-block: contain;
+  overflow-y: auto;
+}
+
+.modal__footer {
+  grid-area: footer;
 }
 
 /* LOAD COUNT CONTROL */
@@ -185,6 +207,12 @@ input.error {
 }
 
 /* CURRENT CHAPTER CONTROL */
+
+.current-chapter-control {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
 
 .current-chapter-control__input {
   text-align: center;

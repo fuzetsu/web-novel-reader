@@ -31,7 +31,7 @@ export function App() {
   const clearResume = preventDefault(() => setNewestChapter(currentChapter))
 
   const chapterControls = (
-    <p aria-hidden className="center">
+    <p aria-hidden>
       <CurrentChapterControl
         loadCount={loadCount}
         chapter={currentChapter}

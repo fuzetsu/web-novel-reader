@@ -24,7 +24,7 @@ export function CurrentChapterControl({ chapter, loadCount, onChange }: Props) {
   }, [chapter])
 
   return (
-    <div>
+    <div className="current-chapter-control">
       <button disabled={chapter <= 1} onClick={() => handleChange(previousChapter)}>
         {loadCount > 1 && previousChapter} &#8592;
       </button>
