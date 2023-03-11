@@ -1,7 +1,7 @@
 import { fetchChapter, getMaxChapter, Server } from 'lib/api'
 import { useLocationHash, usePersistedState, useThrottledScroll } from 'lib/hooks'
 import { delayWithCancel, promiseWithCancel, q, qq, repeat, scrollToTop } from 'lib/util'
-import { useEffect, useMemo, useState } from 'preact/hooks'
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 
 const THREE_DAYS = 1000 * 60 * 60 * 24 * 3
 // const THIRTY_SECONDS = 1000 * 30
@@ -16,9 +16,12 @@ export function useNovelState() {
     return [novelId || null, Number(currentChapterStr) || 1]
   }, [hash])
 
-  const setNovelId = (newNovelId: string) => {
-    if (newNovelId !== novelId) location.hash = `/${newNovelId}/1`
-  }
+  const setNovelId = useCallback(
+    (newNovelId: string) => {
+      if (newNovelId !== novelId) location.hash = `/${newNovelId}/1`
+    },
+    [novelId]
+  )
 
   const novelKey = (key: string) => `${novelId}-${key}`
 
@@ -112,7 +115,10 @@ export function useNovelState() {
     if (novelId) setRecentNovels([novelId, ...recentNovels.filter(id => id !== novelId)])
   }, [novelId])
 
-  const removeRecent = (novelId: string) => setRecentNovels(ids => ids.filter(id => id !== novelId))
+  const removeRecent = useCallback(
+    (novelId: string) => setRecentNovels(ids => ids.filter(id => id !== novelId)),
+    []
+  )
 
   return {
     chapters,
