@@ -2,6 +2,7 @@ import { useMemo } from 'preact/hooks'
 
 interface Props {
   recentNovels: string[]
+  onRemove(novelId: string): void
 }
 
 const idToTitle = (id: string) =>
@@ -9,7 +10,7 @@ const idToTitle = (id: string) =>
 
 const resumeNovel = (id: string, chapter?: string) => (location.hash = `/${id}/${chapter ?? 1}`)
 
-export function RecentNovels({ recentNovels }: Props) {
+export function RecentNovels({ recentNovels, onRemove }: Props) {
   const novels = useMemo(
     () =>
       recentNovels.map(id => ({
@@ -33,6 +34,17 @@ export function RecentNovels({ recentNovels }: Props) {
           >
             <div className="recent-novels__title">{title}</div>
             {newestChapter && <div className="recent-novels__chapter">Chapter {newestChapter}</div>}
+            <div
+              role="button"
+              tabIndex={0}
+              className="recent-novels__remove"
+              onClick={e => {
+                e.stopPropagation()
+                onRemove(id)
+              }}
+            >
+              ❌
+            </div>
           </div>
         ))}
       </div>

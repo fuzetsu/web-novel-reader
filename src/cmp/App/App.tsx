@@ -24,7 +24,8 @@ export function App() {
     setLoadCount,
     setNewestChapter,
     setNovelId,
-    setServer
+    setServer,
+    removeRecent
   } = useNovelState()
 
   const resumeNewestChapter = preventDefault(() => setCurrentChapter(newestChapter))
@@ -62,7 +63,7 @@ export function App() {
   if (!novelId) {
     return (
       <>
-        <RecentNovels recentNovels={recentNovels} />
+        <RecentNovels recentNovels={recentNovels} onRemove={removeRecent} />
         {changeNovelModal}
         <div className="center">
           <button onClick={toggleChooseNovel}>New novel</button>

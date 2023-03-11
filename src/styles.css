@@ -237,9 +237,9 @@ input.error {
 
 .recent-novels__list-item {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto auto;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   padding: 16px;
   border-radius: 8px;
   background: #333;
@@ -255,4 +255,14 @@ input.error {
 .recent-novels__chapter {
   font-style: italic;
   font-size: 70%;
+}
+
+.recent-novels__remove {
+  transition: transform 500ms;
+}
+
+.recent-novels__remove:hover,
+.recent-novels__remove:active,
+.recent-novels__remove:focus-visible {
+  transform: scale(1.4);
 }

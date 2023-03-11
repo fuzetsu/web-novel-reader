@@ -85,6 +85,8 @@ export function useNovelState() {
     if (novelId) setRecentNovels([novelId, ...recentNovels.filter(id => id !== novelId)])
   }, [novelId])
 
+  const removeRecent = (novelId: string) => setRecentNovels(ids => ids.filter(id => id !== novelId))
+
   return {
     chapters,
     currentChapter,
@@ -100,6 +102,7 @@ export function useNovelState() {
     setLoadCount,
     setNewestChapter,
     setNovelId,
-    setServer
+    setServer,
+    removeRecent
   }
 }
