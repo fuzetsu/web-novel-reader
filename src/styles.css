@@ -109,6 +109,17 @@ input.error {
   width: 100%;
 }
 
+.notice {
+  font-size: 75%;
+  color: white;
+  background: #555;
+  border-radius: 15px;
+  padding: 8px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display: inline-block;
+}
+
 /* APP */
 
 .app {

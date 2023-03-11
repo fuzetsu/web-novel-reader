@@ -1,4 +1,4 @@
-import { qq, subURI } from './util'
+import { q, qq, subURI } from './util'
 
 const CORS = 'https://cors.fuz.workers.dev/?'
 
@@ -23,15 +23,21 @@ const TTS_BREAK_FILTER: [RegExp, string][] = [
 const SERVER_CONF = {
   'novel-full': {
     url: 'https://novelfull.com/:novelId/chapter-:chapter.html',
-    sel: '#chapter-content p'
+    sel: '#chapter-content p',
+    maxChap: { url: 'https://novelfull.com/:novelId.html', sel: '.l-chapters > li:last-child' }
   },
   'divine-dao-library': {
     url: 'https://divinedaolibrary.com/:novelId-chapter-:chapter',
-    sel: '.entry-content > p:not([style="text-align:center"])'
+    sel: '.entry-content > p:not([style="text-align:center"])',
+    maxChap: { url: 'https://divinedaolibrary.com/category/:novelId', sel: '.entry-title' }
   },
   'wuxiaworld-eu': {
     url: 'https://www.wuxiaworld.eu/chapter/:novelId-:chapter',
-    sel: '#chapterText'
+    sel: '#chapterText',
+    maxChap: {
+      url: 'https://www.wuxiaworld.eu/novel/:novelId',
+      sel: (doc: Document) => qq('.mantine-Text-root', doc)[7]?.textContent
+    }
   }
 } as const
 
@@ -46,6 +52,11 @@ const SERVER_OVERRIDE: Record<string, Server | undefined> = {
 }
 export const getServerOverride = (novelId: string) => SERVER_OVERRIDE[novelId]
 
+const getServerConf = (defaultServer: Server, novelId: string) => {
+  const server: Server = getServerOverride(novelId) ?? defaultServer
+  return SERVER_CONF[server]
+}
+
 const chapterCache = new Map<string, string[]>()
 
 export const fetchChapter = async (
@@ -57,8 +68,7 @@ export const fetchChapter = async (
   const cacheKey = defaultServer + novelId + chapter + filter
   const cachedChapter = chapterCache.get(cacheKey)
   if (cachedChapter) return cachedChapter
-  const server: Server = getServerOverride(novelId) ?? defaultServer
-  const conf = SERVER_CONF[server]
+  const conf = getServerConf(defaultServer, novelId)
   const url = subURI(conf.url, { novelId, chapter })
   const doc = await fetchDoc(url)
   // remove unwanted content from doc before grabbing lines
@@ -77,4 +87,23 @@ export const fetchChapter = async (
     .filter(Boolean)
   chapterCache.set(cacheKey, lines)
   return lines
+}
+
+export const getMaxChapter = async (defaultServer: Server, novelId: string) => {
+  const conf = getServerConf(defaultServer, novelId)
+  if (!('maxChap' in conf)) return null
+
+  const url = subURI(conf.maxChap.url, { novelId })
+  const doc = await fetchDoc(url)
+
+  const text = (
+    typeof conf.maxChap.sel === 'function'
+      ? conf.maxChap.sel(doc)
+      : q(conf.maxChap.sel, doc)?.textContent
+  )?.match(/[0-9]+/)?.[0]
+
+  if (!text?.trim()) return null
+
+  const num = Number(text)
+  return isNaN(num) ? null : num
 }

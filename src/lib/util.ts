@@ -43,3 +43,24 @@ export const subURI = (uri: string, subs: { [key: string]: string | number }) =>
 
 export const classNames = (...names: (string | false | undefined)[]): string =>
   names.filter(Boolean).join(' ')
+
+export const plural = (thing: string, count: number, altPlural?: string) =>
+  count + ' ' + (count == 1 ? thing : altPlural || thing + 's')
+
+const MINUTE = 1000 * 60
+const HOUR = MINUTE * 60
+const DAY = HOUR * 24
+const WEEK = DAY * 7
+const MONTH = WEEK * 4.5
+const YEAR = MONTH * 12
+const pluralAgo = (thing: string, count: number) => plural(thing, Math.ceil(count)) + ' ago'
+export const prettyTime = (dateInput: string | Date | number) => {
+  const date = new Date(dateInput)
+  const delta = Date.now() - date.getTime()
+  if (delta < MINUTE * 5) return 'just now'
+  if (delta < DAY) return pluralAgo('hour', delta / HOUR)
+  if (delta < WEEK * 2) return pluralAgo('day', delta / DAY)
+  if (delta < WEEK * 8) return pluralAgo('week', delta / WEEK)
+  if (delta < MONTH * 20) return pluralAgo('month', delta / MONTH)
+  return pluralAgo('year', delta / YEAR)
+}
