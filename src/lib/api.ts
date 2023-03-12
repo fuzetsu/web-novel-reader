@@ -20,6 +20,12 @@ const TTS_BREAK_FILTER: [RegExp, string][] = [
   ['sou', 'so']
 ].map(([word, rep]) => [makeFilterRegex(word), rep])
 
+interface TypeDef {
+  url: string
+  sel: string
+  maxChap: { url: string; sel: string | ((doc: Document) => string | null) }
+}
+
 const SERVER_CONF = {
   'novel-full': {
     url: 'https://novelfull.com/:novelId/chapter-:chapter.html',
@@ -39,7 +45,7 @@ const SERVER_CONF = {
       sel: (doc: Document) => qq('.mantine-Text-root', doc)[7]?.textContent
     }
   }
-} as const
+} as const satisfies { [novelId: string]: TypeDef }
 
 export type Server = keyof typeof SERVER_CONF
 
@@ -90,16 +96,12 @@ export const fetchChapter = async (
 }
 
 export const getMaxChapter = async (defaultServer: Server, novelId: string) => {
-  const conf = getServerConf(defaultServer, novelId)
-  if (!('maxChap' in conf)) return null
-
-  const url = subURI(conf.maxChap.url, { novelId })
+  const { maxChap } = getServerConf(defaultServer, novelId)
+  const url = subURI(maxChap.url, { novelId })
   const doc = await fetchDoc(url)
 
   const text = (
-    typeof conf.maxChap.sel === 'function'
-      ? conf.maxChap.sel(doc)
-      : q(conf.maxChap.sel, doc)?.textContent
+    typeof maxChap.sel === 'function' ? maxChap.sel(doc) : q(maxChap.sel, doc)?.textContent
   )?.match(/[0-9]+/)?.[0]
 
   if (!text?.trim()) return null
