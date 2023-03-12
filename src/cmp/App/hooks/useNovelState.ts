@@ -46,7 +46,7 @@ export function useNovelState() {
     return () => {
       stop = true
     }
-  }, [maxChapter])
+  }, [novelId, maxChapter])
 
   const [newestChapter, setNewestChapter] = usePersistedState(novelKey('cur-chap'), 1)
   useEffect(() => {
