@@ -3,9 +3,8 @@ import { useLocationHash, usePersistedState, useThrottledScroll } from 'lib/hook
 import { delayWithCancel, promiseWithCancel, q, qq, repeat, scrollToTop } from 'lib/util'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
 
-const THREE_DAYS = 1000 * 60 * 60 * 24 * 3
-// const THIRTY_SECONDS = 1000 * 30
-const shouldCheck = (lastCheck: number) => lastCheck < Date.now() - THREE_DAYS
+const SIX_HOURS = 1000 * 60 * 60 * 6
+const shouldCheck = (lastCheck: number) => lastCheck < Date.now() - SIX_HOURS
 
 export function useNovelState() {
   const hash = useLocationHash()
@@ -30,16 +29,18 @@ export function useNovelState() {
     checked: number
     value: number | null
   } | null>(novelKey('max-chap'), null)
+
+  const checkMaxChapter = useCallback(() => setMaxChapter(null), [])
+
   useEffect(() => {
     let stop = false
     const check = async () => {
       if (!novelId) return
-      const now = Date.now()
       if (maxChapter == null || shouldCheck(maxChapter.checked)) {
         console.log('CHECKING MAX CHAPTER', { server, novelId, maxChapter })
         const newMax = await getMaxChapter(server, novelId).catch(() => null)
         console.log('GOT NEW MAX', { server, novelId, newMax })
-        if (!stop) setMaxChapter({ checked: now, value: newMax })
+        if (!stop) setMaxChapter({ checked: Date.now(), value: newMax })
       }
     }
     check()
@@ -137,6 +138,7 @@ export function useNovelState() {
     setNewestChapter,
     setNovelId,
     setServer,
-    removeRecent
+    removeRecent,
+    checkMaxChapter
   }
 }

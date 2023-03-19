@@ -1,6 +1,6 @@
 import { ChooseNovelModal } from 'cmp/ChooseNovelModal'
 import { RecentNovels } from 'cmp/RecentNovels'
-import { prettyTime, preventDefault, repeat, scrollToTop } from 'lib/util'
+import { preventDefault, repeat, scrollToTop } from 'lib/util'
 import { useState } from 'preact/hooks'
 import { Chapter } from '../Chapter'
 import { CurrentChapterControl } from '../CurrentChapterControl'
@@ -26,7 +26,8 @@ export function App() {
     setNewestChapter,
     setNovelId,
     setServer,
-    removeRecent
+    removeRecent,
+    checkMaxChapter
   } = useNovelState()
 
   const resumeNewestChapter = preventDefault(() => setCurrentChapter(newestChapter))
@@ -102,7 +103,8 @@ export function App() {
         {maxChapter && maxChapter.value && (
           <p aria-hidden className="center">
             <span className="notice">
-              Latest chapter is {maxChapter.value}, checked {prettyTime(maxChapter.checked)}
+              Latest chapter is {maxChapter.value},{' '}
+              <a onClick={preventDefault(checkMaxChapter)}>check again</a>
             </span>
           </p>
         )}
