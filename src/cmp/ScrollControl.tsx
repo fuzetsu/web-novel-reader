@@ -71,7 +71,7 @@ export function ScrollControl() {
           showExtra && 'scroll-control__extra--visible'
         )}
       >
-        {currentChapter && <small>On chapter {currentChapter}</small>}
+        {currentChapter && <span className="notice">On chapter {currentChapter}</span>}
         {extraLinks.map(link => (
           <button
             className="scroll-control__button"
