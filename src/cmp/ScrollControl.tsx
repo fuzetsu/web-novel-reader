@@ -1,16 +1,31 @@
 import { useRef, useState } from 'preact/hooks'
-import { useScroll } from '../lib/hooks'
+import { useScroll, useThrottledFn } from '../lib/hooks'
 import { classNames, qq, scrollToBottom, scrollToTop } from '../lib/util'
 
 type Link = { label: string } & ({ url: string } | { onClick(): void })
 
 const extraLinks: Link[] = [{ label: 'Home', url: '/' }]
 
+const getCurrentChapter = () => {
+  const chapters = qq<HTMLDivElement>('[data-chapter]')
+  const currentChapter =
+    chapters.find(chapter => {
+      const chapterTop = chapter.offsetTop
+      const chapterBottom = chapterTop + chapter.offsetHeight
+      return window.scrollY >= chapterTop && window.scrollY < chapterBottom
+    }) ?? chapters[0]
+  return currentChapter?.dataset.chapter
+}
+
 export function ScrollControl() {
   const [scrollingDown, setScrollingDown] = useState(true)
   const [scrollPercentage, setScrollPercentage] = useState('0')
 
+  const [currentChapter, setCurrentChapter] = useState(getCurrentChapter)
+
   const [showExtra, setShowExtra] = useState(false)
+
+  const updateCurrentChapter = useThrottledFn(300, () => setCurrentChapter(getCurrentChapter()))
 
   const lastScroll = useRef(0)
   useScroll(() => {
@@ -24,6 +39,7 @@ export function ScrollControl() {
       )
       lastScroll.current = curScroll
     }
+    updateCurrentChapter()
   })
 
   const scrollToNextChapter = () => {
@@ -52,6 +68,7 @@ export function ScrollControl() {
           showExtra && 'scroll-control__extra--visible'
         )}
       >
+        {currentChapter && <small>On chapter {currentChapter}</small>}
         {extraLinks.map(link => (
           <button
             className="scroll-control__button"
