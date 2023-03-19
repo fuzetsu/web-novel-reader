@@ -61,7 +61,10 @@ export function ScrollControl() {
   }
 
   return (
-    <div aria-hidden className="scroll-control">
+    <div
+      aria-hidden
+      className={classNames('scroll-control', showExtra && 'scroll-control--extra-visible')}
+    >
       <div
         className={classNames(
           'scroll-control__extra',
