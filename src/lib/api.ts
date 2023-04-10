@@ -28,7 +28,7 @@ interface TypeDef {
 
 const SERVER_CONF = {
   'novel-full': {
-    url: 'https://novelfull.com/:novelId/chapter-:chapter.html',
+    url: 'https://novelfull.net/:novelId/chapter-:chapter.html',
     sel: '#chapter-content p',
     maxChap: { url: 'https://novelfull.com/:novelId.html', sel: '.l-chapters > li:last-child' }
   },
