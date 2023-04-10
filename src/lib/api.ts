@@ -30,7 +30,7 @@ const SERVER_CONF = {
   'novel-full': {
     url: 'https://novelfull.net/:novelId/chapter-:chapter.html',
     sel: '#chapter-content p',
-    maxChap: { url: 'https://novelfull.com/:novelId.html', sel: '.l-chapters > li:last-child' }
+    maxChap: { url: 'https://novelfull.net/:novelId.html', sel: '.l-chapters > li:last-child' }
   },
   'divine-dao-library': {
     url: 'https://divinedaolibrary.com/:novelId-chapter-:chapter',
