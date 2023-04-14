@@ -10,7 +10,7 @@ const fetchDoc = (url: string) =>
     .then(res => (res.ok ? res.text() : Promise.reject()))
     .then(html => new DOMParser().parseFromString(html, 'text/html'))
 
-const makeFilterRegex = (word: string) => new RegExp(`\\b${word}\\b`, 'gi')
+const makeFilterRegex = (word: string) => new RegExp(`(^|\\b)${word}($|\\b)`, 'gi')
 
 // these words by themselves in a paragraph break ios speak screen
 const TTS_BREAK_FILTER: [RegExp, string][] = [
