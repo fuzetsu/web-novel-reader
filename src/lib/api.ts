@@ -12,14 +12,6 @@ const fetchDoc = (url: string) =>
 
 const makeFilterRegex = (word: string) => new RegExp(`(^|\\b)${word}($|\\b)`, 'gi')
 
-// these words by themselves in a paragraph break ios speak screen
-const TTS_BREAK_FILTER: [RegExp, string][] = [
-  ['hu', 'who'],
-  ['pue', 'poo'],
-  ['puhe', 'poo hey'],
-  ['sou', 'so']
-].map(([word, rep]) => [makeFilterRegex(word), rep])
-
 interface TypeDef {
   url: string
   sel: string
@@ -30,7 +22,7 @@ const SERVER_CONF = {
   'novel-full': {
     url: 'https://novelfull.net/:novelId/chapter-:chapter.html',
     sel: '#chapter-content p',
-    maxChap: { url: 'https://novelfull.net/:novelId.html', sel: '.l-chapters > li:last-child' }
+    maxChap: { url: 'https://novelfull.net/:novelId.html', sel: '.l-chapters > li:first-child' }
   },
   'divine-dao-library': {
     url: 'https://divinedaolibrary.com/:novelId-chapter-:chapter',
@@ -86,7 +78,7 @@ export const fetchChapter = async (
 
   const lines = qq(conf.sel, doc)
     .map(paragraph =>
-      TTS_BREAK_FILTER.concat(cleanFilters)
+      cleanFilters
         .reduce((acc, [regex, rep]) => acc.replace(regex, rep), paragraph.textContent ?? '')
         .trim()
     )
