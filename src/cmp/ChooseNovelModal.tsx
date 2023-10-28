@@ -63,24 +63,36 @@ export function ChooseNovelModal(props: Props) {
   const novelIdInputRef = useAutoFocusRef<HTMLInputElement>()
 
   const serverFormContent = novelType === 'server' && (
-    <div className="form-group">
-      <label>Server {override ? '(overridden)' : ''}</label>
-      {override ? (
-        <code>{override}</code>
-      ) : (
-        <select
-          value={server}
-          onChange={e => {
-            const select = e.target as HTMLSelectElement
-            setServer(select.options[select.selectedIndex].value as Server)
-          }}
-        >
-          {SERVER_NAMES.map(name => (
-            <option value={name}>{name}</option>
-          ))}
-        </select>
-      )}
-    </div>
+    <>
+      <div className="form-group">
+        <label>Server {override ? '(overridden)' : ''}</label>
+        {override ? (
+          <code>{override}</code>
+        ) : (
+          <select
+            value={server}
+            onChange={e => {
+              const select = e.target as HTMLSelectElement
+              setServer(select.options[select.selectedIndex].value as Server)
+            }}
+          >
+            {SERVER_NAMES.map(name => (
+              <option value={name}>{name}</option>
+            ))}
+          </select>
+        )}
+      </div>
+      <div className="form-group">
+        <label>Text filter</label>
+        <textarea
+          value={filter}
+          style={{ width: '100%' }}
+          rows={10}
+          onInput={e => setFilter((e.target as HTMLTextAreaElement).value)}
+          placeholder="e.g. words to match|replacement"
+        />
+      </div>
+    </>
   )
 
   const textFormContent = novelType === 'text' && (
@@ -125,16 +137,6 @@ export function ChooseNovelModal(props: Props) {
       </div>
       {serverFormContent}
       {textFormContent}
-      <div className="form-group">
-        <label>Text filter</label>
-        <textarea
-          value={filter}
-          style={{ width: '100%' }}
-          rows={10}
-          onInput={e => setFilter((e.target as HTMLTextAreaElement).value)}
-          placeholder="e.g. words to match|replacement"
-        />
-      </div>
     </div>
   )
 
