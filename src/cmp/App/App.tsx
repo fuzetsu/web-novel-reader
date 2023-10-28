@@ -118,8 +118,13 @@ export function App() {
         {maxChapter && maxChapter.value && (
           <p aria-hidden className="center">
             <span className="notice">
-              Latest chapter is {maxChapter.value},{' '}
-              <a onClick={preventDefault(checkMaxChapter)}>check again</a>
+              Latest chapter is {maxChapter.value}
+              {novelType === 'server' && (
+                <>
+                  ,{[' ']}
+                  <a onClick={preventDefault(checkMaxChapter)}>check again</a>
+                </>
+              )}
             </span>
           </p>
         )}
