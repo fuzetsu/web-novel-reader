@@ -1,7 +1,23 @@
 import { fetchChapter, getMaxChapter, Server } from 'lib/api'
 import { useLocationHash, usePersistedState, useThrottledScroll } from 'lib/hooks'
-import { delayWithCancel, promiseWithCancel, q, qq, repeat, scrollToTop } from 'lib/util'
+import {
+  delayWithCancel,
+  promiseWithCancel,
+  q,
+  qq,
+  repeat,
+  scrollToTop,
+  splitNovelText
+} from 'lib/util'
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
+
+type NovelType = 'server' | 'text'
+
+type MaxChapter = {
+  /** numeric date value representing check time */
+  checked: number
+  value: number | null
+} | null
 
 const SIX_HOURS = 1000 * 60 * 60 * 6
 const shouldCheck = (lastCheck: number) => lastCheck < Date.now() - SIX_HOURS
@@ -24,18 +40,30 @@ export function useNovelState() {
 
   const novelKey = (key: string) => `${novelId}-${key}`
 
-  const [maxChapter, setMaxChapter] = usePersistedState<{
-    /** numeric date value representing check time */
-    checked: number
-    value: number | null
-  } | null>(novelKey('max-chap'), null)
+  const [novelType, setNovelType] = usePersistedState<NovelType>(novelKey('type'), 'server')
+
+  const [novelText, setNovelText] = usePersistedState(novelKey('text'), '')
+  const novelTextChapters = useMemo(() => splitNovelText(novelText), [novelText])
+
+  const [storedMaxChapter, setMaxChapter] = usePersistedState<MaxChapter>(
+    novelKey('max-chap'),
+    null
+  )
+
+  const maxChapter = useMemo<MaxChapter>(
+    () =>
+      novelType === 'text'
+        ? { checked: Date.now(), value: novelTextChapters.length }
+        : storedMaxChapter,
+    [novelType, novelTextChapters, storedMaxChapter]
+  )
 
   const checkMaxChapter = useCallback(() => setMaxChapter(null), [])
 
   useEffect(() => {
     let stop = false
     const check = async () => {
-      if (!novelId) return
+      if (!novelId || novelType !== 'server') return
       if (maxChapter == null || shouldCheck(maxChapter.checked)) {
         console.log('CHECKING MAX CHAPTER', { server, novelId, maxChapter })
         const newMax = await getMaxChapter(server, novelId).catch(() => null)
@@ -78,6 +106,10 @@ export function useNovelState() {
     scrollToTop()
     setChapters([])
     if (!novelId) return
+    if (novelType === 'text') {
+      setChapters(novelTextChapters.slice(currentChapter - 1))
+      return
+    }
     return delayWithCancel(500, () =>
       promiseWithCancel(
         Promise.all(
@@ -93,7 +125,7 @@ export function useNovelState() {
         setChapters
       )
     )
-  }, [novelId, currentChapter, loadCount, server, filter])
+  }, [novelId, currentChapter, loadCount, server, filter, novelTextChapters])
 
   // restore scroll position when chapters load
   const [lastPos, setLastPos] = usePersistedState<string | null>(novelKey('last-pos'), null)
@@ -123,22 +155,26 @@ export function useNovelState() {
 
   return {
     chapters,
+    checkMaxChapter,
     currentChapter,
-    maxChapter,
     filter,
     loadCount,
+    maxChapter,
     newestChapter,
     novelId,
     novelName,
+    novelText,
+    novelType,
     recentNovels,
+    removeRecent,
     server,
     setCurrentChapter,
     setFilter,
     setLoadCount,
     setNewestChapter,
     setNovelId,
-    setServer,
-    removeRecent,
-    checkMaxChapter
+    setNovelText,
+    setNovelType,
+    setServer
   }
 }

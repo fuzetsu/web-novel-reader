@@ -104,6 +104,7 @@ input.error {
 
 .form-group > label {
   display: block;
+  margin-bottom: 4px;
 }
 
 .form-group > input {

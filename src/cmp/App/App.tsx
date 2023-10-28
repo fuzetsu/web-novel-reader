@@ -11,23 +11,27 @@ import { useNovelState } from './hooks'
 export function App() {
   const {
     chapters,
+    checkMaxChapter,
     currentChapter,
-    maxChapter,
     filter,
     loadCount,
+    maxChapter,
     newestChapter,
     novelId,
     novelName,
+    novelText,
+    novelType,
     recentNovels,
+    removeRecent,
     server,
     setCurrentChapter,
     setFilter,
     setLoadCount,
     setNewestChapter,
     setNovelId,
-    setServer,
-    removeRecent,
-    checkMaxChapter
+    setNovelText,
+    setNovelType,
+    setServer
   } = useNovelState()
 
   const resumeNewestChapter = preventDefault(() => setCurrentChapter(newestChapter))
@@ -39,6 +43,7 @@ export function App() {
         loadCount={loadCount}
         chapter={currentChapter}
         onChange={setCurrentChapter}
+        maxChapter={novelType === 'text' ? maxChapter?.value : null}
       />
     </p>
   )
@@ -48,15 +53,25 @@ export function App() {
 
   const changeNovelModal = chooseNovelOpen && (
     <ChooseNovelModal
-      novelId={novelId}
-      server={server}
-      filter={filter}
+      state={
+        novelType === 'server'
+          ? { type: 'server', filter, novelId, server }
+          : { type: 'text', novelId, novelText }
+      }
       onClose={() => setChooseNovelOpen(false)}
-      onChange={(server, novelId, filter) => {
-        if (novelId) {
-          setNovelId(novelId)
-          setServer(server)
-          setFilter(filter)
+      onChange={async nextState => {
+        if (!nextState.novelId) return
+        if (nextState.novelId !== novelId) {
+          setNovelId(nextState.novelId)
+          // hack: wait a frame after setting new novel ID to store subsequent state in correct localStorage key
+          await new Promise(requestAnimationFrame)
+        }
+        setNovelType(nextState.type)
+        if (nextState.type === 'server') {
+          setServer(nextState.server)
+          setFilter(nextState.filter)
+        } else {
+          setNovelText(nextState.novelText)
         }
       }}
     />
@@ -111,13 +126,10 @@ export function App() {
         {repeat(loadCount, index => {
           const chapter = currentChapter + index
           const setChapter = index > 0 ? () => setCurrentChapter(chapter) : undefined
+          const chapterLines = chapters[index]
+          if (novelType === 'text' && !chapterLines) return null
           return (
-            <Chapter
-              key={chapter}
-              chapter={chapter}
-              setChapter={setChapter}
-              lines={chapters[index]}
-            />
+            <Chapter key={chapter} chapter={chapter} setChapter={setChapter} lines={chapterLines} />
           )
         })}
         {chapterControls}

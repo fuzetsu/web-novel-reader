@@ -4,15 +4,18 @@ import { useEffect, useState } from 'preact/hooks'
 interface Props {
   chapter: number
   loadCount: number
+  maxChapter?: number | null
   onChange(chapter: number): void
 }
 
-export function CurrentChapterControl({ chapter, loadCount, onChange }: Props) {
+export function CurrentChapterControl({ chapter, loadCount, maxChapter, onChange }: Props) {
   const nextChapter = chapter + loadCount
   const previousChapter = Math.max(1, chapter - loadCount)
 
   const [chapterInput, setChapterInput] = useState(String(chapter))
   const [inputError, setInputError] = useState(false)
+
+  const disableNext = Boolean(maxChapter && nextChapter > maxChapter)
 
   const handleChange = (chapter: number) => {
     onChange(chapter)
@@ -41,7 +44,7 @@ export function CurrentChapterControl({ chapter, loadCount, onChange }: Props) {
           if (!error) handleChange(userInput)
         }}
       />
-      <button onClick={() => handleChange(nextChapter)}>
+      <button disabled={disableNext} onClick={() => handleChange(nextChapter)}>
         &#8594; {loadCount > 1 && nextChapter}
       </button>
     </div>
