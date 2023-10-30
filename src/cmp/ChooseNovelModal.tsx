@@ -86,7 +86,6 @@ export function ChooseNovelModal(props: Props) {
         <label>Text filter</label>
         <textarea
           value={filter}
-          style={{ width: '100%' }}
           rows={10}
           onInput={e => setFilter((e.target as HTMLTextAreaElement).value)}
           placeholder="e.g. words to match|replacement"
@@ -95,17 +94,38 @@ export function ChooseNovelModal(props: Props) {
     </>
   )
 
+  const setTextAreaCursor = (target: HTMLElement, pos: 'top' | 'bottom') => {
+    const txt = target.closest('.form-group')?.querySelector('textarea')
+    if (!txt) return
+    const { cursor, scroll } =
+      pos === 'top'
+        ? { cursor: 0, scroll: 0 }
+        : { cursor: novelText.length, scroll: txt.scrollHeight }
+    txt.setSelectionRange(cursor, cursor)
+    txt.scrollTop = scroll
+  }
   const textFormContent = novelType === 'text' && (
     <div className="form-group">
       <label>Content</label>
       <textarea
         {...COMMON_INPUT_PROPS}
         value={novelText}
-        style={{ width: '100%' }}
         rows={10}
         onInput={e => setNovelText((e.target as HTMLTextAreaElement).value)}
         placeholder="Chapter 1: Once upon a time"
       />
+      <div class="button-group small">
+        <button
+          onClick={e => {
+            setTextAreaCursor(e.target as HTMLButtonElement, 'top')
+          }}
+        >
+          Prepend
+        </button>
+        <button onClick={e => setTextAreaCursor(e.target as HTMLButtonElement, 'bottom')}>
+          Append
+        </button>
+      </div>
     </div>
   )
 

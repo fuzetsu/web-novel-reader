@@ -107,7 +107,7 @@ input.error {
   margin-bottom: 4px;
 }
 
-.form-group > input {
+.form-group > input, .form-group textarea {
   width: 100%;
 }
 
