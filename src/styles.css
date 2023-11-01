@@ -256,23 +256,6 @@ a.emoji:hover {
   grid-area: footer;
 }
 
-/* LOAD COUNT CONTROL */
-
-.load-count-control {
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 8px;
-}
-
-.load-count-control__left {
-  text-align: right;
-}
-
-.load-count-control__right {
-  text-align: left;
-}
-
 /* CHAPTER */
 
 .chapter {
@@ -290,6 +273,7 @@ a.emoji:hover {
 
 .current-chapter-control__input {
   text-align: center;
+  min-width: 75px;
 }
 
 /* RECENT NOVELS */
