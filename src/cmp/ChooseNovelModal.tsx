@@ -36,7 +36,7 @@ export function ChooseNovelModal(props: Props) {
   const { onClose, state, onChange } = props
 
   const [novelType, setNovelType] = useState(state.type)
-  const [novelId, setNovelId] = useState(state.novelId ?? '')
+  const [novelId, setNovelId] = useState(() => state.novelId?.replace(/-/g, ' ') ?? '')
   const cleanNovelId = novelId.toLowerCase().replace(/\s+/g, '-')
 
   const serverState = state.type === 'server' ? state : null
@@ -53,8 +53,9 @@ export function ChooseNovelModal(props: Props) {
     serverFormDirty || textFormDirty || novelType !== state.type || novelId !== state.novelId
 
   const handleChange = () => {
-    if (novelType === 'server') onChange({ type: 'server', filter, novelId, server })
-    else if (novelType === 'text') onChange({ type: 'text', novelId, novelText: novelText })
+    if (novelType === 'server') onChange({ type: 'server', filter, novelId: cleanNovelId, server })
+    else if (novelType === 'text')
+      onChange({ type: 'text', novelId: cleanNovelId, novelText: novelText })
     onClose()
   }
 
@@ -147,10 +148,16 @@ export function ChooseNovelModal(props: Props) {
       <div className="form-group">
         <label>Type</label>
         <div className="button-group">
-          <button disabled={novelType === 'server'} onClick={() => setNovelType('server')}>
+          <button
+            class={novelType === 'server' ? 'selected' : ''}
+            onClick={() => setNovelType('server')}
+          >
             Server
           </button>
-          <button disabled={novelType === 'text'} onClick={() => setNovelType('text')}>
+          <button
+            class={novelType === 'text' ? 'selected' : ''}
+            onClick={() => setNovelType('text')}
+          >
             Text
           </button>
         </div>

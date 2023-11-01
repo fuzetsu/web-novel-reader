@@ -4,7 +4,6 @@ import { preventDefault, repeat, scrollToTop } from 'lib/util'
 import { useState } from 'preact/hooks'
 import { Chapter } from '../Chapter'
 import { CurrentChapterControl } from '../CurrentChapterControl'
-import { LoadCountControl } from '../LoadCountControl'
 import { ScrollControl } from '../ScrollControl'
 import { useNovelState } from './hooks'
 
@@ -42,7 +41,10 @@ export function App() {
       <CurrentChapterControl
         loadCount={loadCount}
         chapter={currentChapter}
-        onChange={setCurrentChapter}
+        onChange={(chapter, loadCount) => {
+          setCurrentChapter(chapter)
+          setLoadCount(loadCount)
+        }}
         maxChapter={novelType === 'text' ? maxChapter?.value : null}
       />
     </p>
@@ -94,15 +96,14 @@ export function App() {
       {changeNovelModal}
       <main className="app">
         <div aria-hidden className="center">
-          <h3>
-            <a href="#/">Home</a>
-          </h3>
           <h1>
+            <a class="emoji app__home-button" href="#/">
+              &#127968;
+            </a>
             <a href="" onClick={toggleChooseNovel}>
               {novelName}
             </a>
           </h1>
-          <LoadCountControl loadCount={loadCount} onChange={setLoadCount} />
         </div>
         {chapterControls}
         {newestChapter > currentChapter && (
@@ -118,12 +119,13 @@ export function App() {
         {maxChapter && maxChapter.value && (
           <p aria-hidden className="center">
             <span className="notice">
-              Latest chapter is {maxChapter.value}
-              {novelType === 'server' && (
+              {novelType === 'server' ? (
                 <>
-                  ,{[' ']}
+                  Latest chapter is {maxChapter.value},{' '}
                   <a onClick={preventDefault(checkMaxChapter)}>check again</a>
                 </>
+              ) : (
+                <>{maxChapter.value} chapters</>
               )}
             </span>
           </p>

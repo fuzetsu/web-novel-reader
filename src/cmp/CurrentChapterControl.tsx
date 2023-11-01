@@ -5,7 +5,7 @@ interface Props {
   chapter: number
   loadCount: number
   maxChapter?: number | null
-  onChange(chapter: number): void
+  onChange(chapter: number, loadCount: number): void
 }
 
 export function CurrentChapterControl({ chapter, loadCount, maxChapter, onChange }: Props) {
@@ -14,12 +14,13 @@ export function CurrentChapterControl({ chapter, loadCount, maxChapter, onChange
 
   const [chapterInput, setChapterInput] = useState(String(chapter))
   const [inputError, setInputError] = useState(false)
+  const [focused, setFocused] = useState(false)
 
   const disableNext = Boolean(maxChapter && nextChapter > maxChapter)
 
-  const handleChange = (chapter: number) => {
-    onChange(chapter)
-    setChapterInput(String(chapter))
+  const handleChange = (newChapter: number) => {
+    onChange(newChapter, loadCount)
+    setChapterInput(String(newChapter))
   }
 
   useEffect(() => {
@@ -31,10 +32,17 @@ export function CurrentChapterControl({ chapter, loadCount, maxChapter, onChange
       <button disabled={chapter <= 1} onClick={() => handleChange(previousChapter)}>
         {loadCount > 1 && previousChapter} &#8592;
       </button>
+      <button disabled={loadCount <= 1} onClick={() => onChange(chapter, loadCount - 1)}>
+        -
+      </button>
       <input
         className={classNames('current-chapter-control__input', inputError && 'error')}
-        value={chapterInput}
+        value={
+          focused || loadCount === 1 ? chapterInput : `${chapter}-${chapter + (loadCount - 1)}`
+        }
         size={5}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         onChange={e => {
           if (!(e.target instanceof HTMLInputElement)) return
           setChapterInput(e.target.value)
@@ -44,6 +52,9 @@ export function CurrentChapterControl({ chapter, loadCount, maxChapter, onChange
           if (!error) handleChange(userInput)
         }}
       />
+      <button disabled={loadCount >= 20} onClick={() => onChange(chapter, loadCount + 1)}>
+        +
+      </button>
       <button disabled={disableNext} onClick={() => handleChange(nextChapter)}>
         &#8594; {loadCount > 1 && nextChapter}
       </button>
