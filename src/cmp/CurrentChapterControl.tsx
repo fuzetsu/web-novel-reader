@@ -52,7 +52,10 @@ export function CurrentChapterControl({ chapter, loadCount, maxChapter, onChange
           if (!error) handleChange(userInput)
         }}
       />
-      <button disabled={loadCount >= 20} onClick={() => onChange(chapter, loadCount + 1)}>
+      <button
+        disabled={disableNext || loadCount >= 20}
+        onClick={() => onChange(chapter, loadCount + 1)}
+      >
         +
       </button>
       <button disabled={disableNext} onClick={() => handleChange(nextChapter)}>
