@@ -39,6 +39,8 @@ export function ChooseNovelModal(props: Props) {
   const [novelId, setNovelId] = useState(() => state.novelId?.replace(/-/g, ' ') ?? '')
   const cleanNovelId = novelId.toLowerCase().replace(/\s+/g, '-')
 
+  const isNew = !state.novelId
+
   const serverState = state.type === 'server' ? state : null
   const [filter, setFilter] = useState(serverState?.filter ?? '')
   const [server, setServer] = useState(serverState?.server ?? 'novel-full')
@@ -142,6 +144,7 @@ export function ChooseNovelModal(props: Props) {
           {...COMMON_INPUT_PROPS}
           ref={novelIdInputRef}
           value={novelId}
+          disabled={!isNew}
           onInput={e => setNovelId((e.target as HTMLInputElement | undefined)?.value ?? '')}
         />
       </div>
