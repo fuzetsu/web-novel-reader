@@ -171,7 +171,9 @@ a.button {
 
 .nav__actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+  justify-content: right;
 }
 
 /* SCROLL CONTROL */
