@@ -31,31 +31,39 @@ html {
   font-size: 140%;
 }
 
-button {
+button, .button {
   cursor: pointer;
 }
 
-button.selected {
+.button.selected, button.selected {
   border: 2px solid black;
   box-shadow: 0 0 0 3px lightblue;
   pointer-events: none;
   opacity: 0.9;
 }
 
+.button:hover:not(:disabled),
+.button:active:not(:disabled),
 button:hover:not(:disabled),
 button:active:not(:disabled) {
   opacity: 0.9;
 }
 
-button:disabled {
+.button:disabled, button:disabled, input:disabled {
   background: rgb(151, 151, 151);
   color: rgb(42, 42, 42);
+}
+
+input.error, button.error {
+  background: #a04949;
+  color: white;
 }
 
 button,
 input,
 select,
-textarea {
+textarea,
+.button {
   padding: 8px 12px;
   font-size: inherit;
   font-family: inherit;
@@ -65,9 +73,8 @@ textarea {
   border-radius: 4px;
 }
 
-input.error {
-  background: #a04949;
-  color: white;
+a.button {
+  text-decoration: none;
 }
 
 /* UTIL */
@@ -81,12 +88,12 @@ input.error {
   text-align: center;
 }
 
-a.emoji:hover {
-  text-decoration: none;
-}
-
 .small {
   font-size: 80%;
+}
+
+.large {
+  font-size: 130%;
 }
 
 .huge {
@@ -146,6 +153,25 @@ a.emoji:hover {
 .app__home-button {
   margin-left: -56px;
   margin-right: 10px;
+}
+
+/** NAV **/
+
+.nav {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.nav__title {
+  font-size: 135%;
+}
+
+.nav__actions {
+  display: flex;
+  gap: 8px;
 }
 
 /* SCROLL CONTROL */
@@ -279,18 +305,10 @@ a.emoji:hover {
 /* RECENT NOVELS */
 
 .recent-novels {
-  margin-bottom: 8px;
-  margin: 8px;
-}
-
-.recent-novels__list {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-width: 500px;
   margin: auto;
-  padding-left: 8px;
-  padding-right: 8px;
 }
 
 .recent-novels__list-item {

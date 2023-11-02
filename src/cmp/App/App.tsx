@@ -6,6 +6,7 @@ import { Chapter } from '../Chapter'
 import { CurrentChapterControl } from '../CurrentChapterControl'
 import { ScrollControl } from '../ScrollControl'
 import { useNovelState } from './hooks'
+import { Nav } from 'cmp/Nav'
 
 export function App() {
   const {
@@ -56,9 +57,9 @@ export function App() {
   const changeNovelModal = chooseNovelOpen && (
     <ChooseNovelModal
       state={
-        novelType === 'server'
-          ? { type: 'server', filter, novelId, server }
-          : { type: 'text', novelId, novelText }
+        novelType === 'text'
+          ? { type: 'text', novelId, novelText }
+          : { type: 'server', filter, novelId, server }
       }
       onClose={() => setChooseNovelOpen(false)}
       onChange={async nextState => {
@@ -81,13 +82,13 @@ export function App() {
 
   if (!novelId) {
     return (
-      <>
+      <div className="app">
+        <Nav title="Recent novels">
+          <button onClick={toggleChooseNovel}>New novel</button>
+        </Nav>
         <RecentNovels recentNovels={recentNovels} onRemove={removeRecent} />
         {changeNovelModal}
-        <div className="center">
-          <button onClick={toggleChooseNovel}>New novel</button>
-        </div>
-      </>
+      </div>
     )
   }
 
@@ -95,16 +96,12 @@ export function App() {
     <>
       {changeNovelModal}
       <main className="app">
-        <div aria-hidden className="center">
-          <h1>
-            <a class="emoji app__home-button" href="#/">
-              &#127968;
-            </a>
-            <a href="" onClick={toggleChooseNovel}>
-              {novelName}
-            </a>
-          </h1>
-        </div>
+        <Nav title={novelName || novelId}>
+          <a href="#/" className="button">
+            Novels
+          </a>
+          <button onClick={toggleChooseNovel}>Manage</button>
+        </Nav>
         {chapterControls}
         {newestChapter > currentChapter && (
           <p aria-hidden className="center">

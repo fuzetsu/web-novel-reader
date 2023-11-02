@@ -23,31 +23,32 @@ export function RecentNovels({ recentNovels, onRemove }: Props) {
 
   return (
     <div className="recent-novels">
-      <h1 className="center">Recent novels</h1>
-      <div className="recent-novels__list">
-        {novels.map(({ id, title, newestChapter }) => (
+      {novels.map(({ id, title, newestChapter }) => (
+        <div
+          key={id}
+          className="recent-novels__list-item"
+          onClick={() => resumeNovel(id, newestChapter)}
+          onKeyDown={e => e.key === 'Enter' && resumeNovel(id, newestChapter)}
+        >
+          <div className="recent-novels__title">{title}</div>
+          {newestChapter ? (
+            <div className="recent-novels__chapter">Chapter {newestChapter}</div>
+          ) : (
+            <span />
+          )}
           <div
-            key={id}
-            className="recent-novels__list-item"
-            onClick={() => resumeNovel(id, newestChapter)}
-            onKeyDown={e => e.key === 'Enter' && resumeNovel(id, newestChapter)}
+            role="button"
+            tabIndex={0}
+            className="recent-novels__remove"
+            onClick={e => {
+              e.stopPropagation()
+              onRemove(id)
+            }}
           >
-            <div className="recent-novels__title">{title}</div>
-            {newestChapter && <div className="recent-novels__chapter">Chapter {newestChapter}</div>}
-            <div
-              role="button"
-              tabIndex={0}
-              className="recent-novels__remove"
-              onClick={e => {
-                e.stopPropagation()
-                onRemove(id)
-              }}
-            >
-              ❌
-            </div>
+            ❌
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   )
 }
