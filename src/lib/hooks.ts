@@ -1,3 +1,4 @@
+import { RefObject } from 'preact'
 import {
   Inputs,
   StateUpdater,
@@ -114,11 +115,15 @@ export function useLocationHash() {
   return hash
 }
 
-export function useAutoFocusRef<T extends HTMLElement>() {
+export function useAutoFocusRef<T extends HTMLElement>(): [
+  autoFocusReF: RefObject<T>,
+  focus: () => void
+] {
   const ref = useRef<T>(null)
+  const [count, reset] = useReducer(x => x + 1, 0)
   useEffect(() => {
     const id = requestAnimationFrame(() => ref.current?.focus())
     return () => cancelAnimationFrame(id)
-  }, [])
-  return ref
+  }, [count])
+  return [ref, reset as () => void]
 }

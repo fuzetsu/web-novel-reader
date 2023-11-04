@@ -28,7 +28,7 @@ html {
   font-family: sans-serif;
   background: black;
   color: white;
-  font-size: 16px;
+  font-size: 18px;
   --space-1: 6px;
   --space-2: 10px;
   --space-3: 16px;
@@ -116,7 +116,7 @@ a.button {
 }
 
 .form-group:not(:last-child) {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-1);
 }
 
 .form-group {
@@ -211,9 +211,8 @@ a.button {
   color: white;
   background: transparent;
   border: none;
-  padding-left: 23px;
-  padding-right: 23px;
-  margin-bottom: -5px;
+  padding-right: 18px;
+  margin-bottom: -10px;
   transition: transform 250ms ease;
   pointer-events: auto;
 }
@@ -308,6 +307,7 @@ a.button {
 .current-chapter-control__input {
   text-align: center;
   min-width: 75px;
+  max-width: 90px;
   padding-left: 0;
   padding-right: 0;
 }

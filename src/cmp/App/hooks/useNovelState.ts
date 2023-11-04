@@ -1,6 +1,7 @@
 import { fetchChapter, getMaxChapter, Server } from 'lib/api'
 import { useLocationHash, usePersistedState, useThrottledScroll } from 'lib/hooks'
 import {
+  applyTextFilter,
   delayWithCancel,
   promiseWithCancel,
   q,
@@ -42,8 +43,13 @@ export function useNovelState() {
 
   const [novelType, setNovelType] = usePersistedState<NovelType>(novelKey('type'), 'server')
 
+  const [filter, setFilter] = usePersistedState(novelKey('filter'), '')
+
   const [novelText, setNovelText] = usePersistedState(novelKey('text'), '')
-  const novelTextChapters = useMemo(() => splitNovelText(novelText), [novelText])
+  const novelTextChapters = useMemo(
+    () => splitNovelText(novelText).map(chapter => applyTextFilter(chapter, filter)),
+    [novelText, filter]
+  )
 
   const [storedMaxChapter, setMaxChapter] = usePersistedState<MaxChapter>(
     novelKey('max-chap'),
@@ -84,8 +90,6 @@ export function useNovelState() {
 
   const [server, setServer] = usePersistedState<Server>(novelKey('server'), 'novel-full')
 
-  const [filter, setFilter] = usePersistedState(novelKey('filter'), '')
-
   const setCurrentChapter = (chapter: number) => {
     location.hash = `/${novelId}/${chapter}`
   }
@@ -114,12 +118,9 @@ export function useNovelState() {
       promiseWithCancel(
         Promise.all(
           repeat(loadCount, index =>
-            fetchChapter(
-              server,
-              novelId,
-              currentChapter + index,
-              filter.split('\n').map(x => x.split('|'))
-            ).catch(() => ['Error fetching chapter.'])
+            fetchChapter(server, novelId, currentChapter + index)
+              .then(chapter => applyTextFilter(chapter, filter))
+              .catch(() => ['Error fetching chapter.'])
           )
         ),
         setChapters

@@ -58,8 +58,8 @@ export function App() {
     <ChooseNovelModal
       state={
         novelType === 'text'
-          ? { type: 'text', novelId, novelText }
-          : { type: 'server', filter, novelId, server }
+          ? { type: 'text', novelId, novelText, filter }
+          : { type: 'server', novelId, server, filter }
       }
       onClose={() => setChooseNovelOpen(false)}
       onChange={async nextState => {
@@ -70,9 +70,9 @@ export function App() {
           await new Promise(requestAnimationFrame)
         }
         setNovelType(nextState.type)
+        setFilter(nextState.filter)
         if (nextState.type === 'server') {
           setServer(nextState.server)
-          setFilter(nextState.filter)
         } else {
           setNovelText(nextState.novelText)
         }

@@ -1,5 +1,6 @@
 import { classNames } from 'lib/util'
 import { useEffect, useState } from 'preact/hooks'
+import { DISABLE_AUTO_INPUT_PROPS } from './TextField'
 
 interface Props {
   chapter: number
@@ -36,11 +37,11 @@ export function CurrentChapterControl({ chapter, loadCount, maxChapter, onChange
         -
       </button>
       <input
+        {...DISABLE_AUTO_INPUT_PROPS}
         className={classNames('current-chapter-control__input', inputError && 'error')}
         value={
           focused || loadCount === 1 ? chapterInput : `${chapter}-${chapter + (loadCount - 1)}`
         }
-        size={5}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         onChange={e => {

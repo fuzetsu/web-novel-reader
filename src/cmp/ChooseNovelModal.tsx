@@ -2,9 +2,12 @@ import { getServerOverride, Server, SERVER_NAMES } from 'lib/api'
 import { useAutoFocusRef } from 'lib/hooks'
 import { useState } from 'preact/hooks'
 import { Modal } from './Modal'
+import { TextField } from './TextField'
+import { RefObject } from 'preact'
 
 interface CommonState {
   novelId: string | null
+  filter: string
 }
 
 interface TextState extends CommonState {
@@ -15,7 +18,6 @@ interface TextState extends CommonState {
 interface ServerState extends CommonState {
   type: 'server'
   server: Server
-  filter: string
 }
 
 type State = TextState | ServerState
@@ -26,109 +28,73 @@ interface Props {
   onClose(): void
 }
 
-const COMMON_INPUT_PROPS = {
-  autoComplete: 'off',
-  autoCapitalize: 'off',
-  autoCorrect: 'off'
-} as const
-
 export function ChooseNovelModal(props: Props) {
   const { onClose, state, onChange } = props
 
   const [novelType, setNovelType] = useState(state.type)
   const [novelId, setNovelId] = useState(() => state.novelId?.replace(/-/g, ' ') ?? '')
+  const [filter, setFilter] = useState(state.filter ?? '')
   const cleanNovelId = novelId.toLowerCase().replace(/\s+/g, '-')
 
   const isNew = !state.novelId
 
   const serverState = state.type === 'server' ? state : null
-  const [filter, setFilter] = useState(serverState?.filter ?? '')
   const [server, setServer] = useState(serverState?.server ?? 'novel-full')
-  const serverFormDirty =
-    novelType === 'server' && (server !== serverState?.server || filter !== serverState.filter)
+  const serverFormDirty = novelType === 'server' && server !== serverState?.server
 
   const textState = state.type === 'text' ? state : null
   const [novelText, setNovelText] = useState(textState?.novelText ?? '')
   const textFormDirty = novelType === 'text' && novelText !== textState?.novelText
 
   const formDirty =
-    serverFormDirty || textFormDirty || novelType !== state.type || novelId !== state.novelId
+    serverFormDirty ||
+    textFormDirty ||
+    novelType !== state.type ||
+    novelId !== state.novelId ||
+    filter !== state.filter
 
   const handleChange = () => {
     if (novelType === 'server') onChange({ type: 'server', filter, novelId: cleanNovelId, server })
     else if (novelType === 'text')
-      onChange({ type: 'text', novelId: cleanNovelId, novelText: novelText })
+      onChange({ type: 'text', novelId: cleanNovelId, novelText, filter })
     onClose()
   }
 
   const override = getServerOverride(cleanNovelId)
 
-  const novelIdInputRef = useAutoFocusRef<HTMLInputElement>()
+  const [autoFocusRef] = useAutoFocusRef<HTMLInputElement>()
 
   const serverFormContent = novelType === 'server' && (
-    <>
-      <div className="form-group">
-        <label>Server {override ? '(overridden)' : ''}</label>
-        {override ? (
-          <code>{override}</code>
-        ) : (
-          <select
-            value={server}
-            onChange={e => {
-              const select = e.target as HTMLSelectElement
-              setServer(select.options[select.selectedIndex].value as Server)
-            }}
-          >
-            {SERVER_NAMES.map(name => (
-              <option value={name}>{name}</option>
-            ))}
-          </select>
-        )}
-      </div>
-      <div className="form-group">
-        <label>Text filter</label>
-        <textarea
-          value={filter}
-          rows={10}
-          onInput={e => setFilter((e.target as HTMLTextAreaElement).value)}
-          placeholder="e.g. words to match|replacement"
-        />
-      </div>
-    </>
+    <div className="form-group">
+      <label>Server {override ? '(overridden)' : ''}</label>
+      {override ? (
+        <code>{override}</code>
+      ) : (
+        <select
+          value={server}
+          onChange={e => {
+            const select = e.target as HTMLSelectElement
+            setServer(select.options[select.selectedIndex].value as Server)
+          }}
+        >
+          {SERVER_NAMES.map(name => (
+            <option value={name}>{name}</option>
+          ))}
+        </select>
+      )}
+    </div>
   )
 
-  const setTextAreaCursor = (target: HTMLElement, pos: 'top' | 'bottom') => {
-    const txt = target.closest('.form-group')?.querySelector('textarea')
-    if (!txt) return
-    const { cursor, scroll } =
-      pos === 'top'
-        ? { cursor: 0, scroll: 0 }
-        : { cursor: novelText.length, scroll: txt.scrollHeight }
-    txt.setSelectionRange(cursor, cursor)
-    txt.scrollTop = scroll
-  }
   const textFormContent = novelType === 'text' && (
     <div className="form-group">
       <label>Content</label>
-      <textarea
-        {...COMMON_INPUT_PROPS}
+      <TextField
+        showTextControls
         value={novelText}
         rows={10}
-        onInput={e => setNovelText((e.target as HTMLTextAreaElement).value)}
+        onInput={setNovelText}
         placeholder="Chapter 1: Once upon a time"
       />
-      <div class="button-group small">
-        <button
-          onClick={e => {
-            setTextAreaCursor(e.target as HTMLButtonElement, 'top')
-          }}
-        >
-          Prepend
-        </button>
-        <button onClick={e => setTextAreaCursor(e.target as HTMLButtonElement, 'bottom')}>
-          Append
-        </button>
-      </div>
     </div>
   )
 
@@ -139,19 +105,19 @@ export function ChooseNovelModal(props: Props) {
       }}
     >
       <div className="form-group">
-        <label>Novel ID</label>
-        <input
-          {...COMMON_INPUT_PROPS}
-          ref={novelIdInputRef}
+        <label>{novelType === 'text' ? 'Novel name' : 'Novel ID'}</label>
+        <TextField
+          fieldRef={isNew ? autoFocusRef : undefined}
           value={novelId}
           disabled={!isNew}
-          onInput={e => setNovelId((e.target as HTMLInputElement | undefined)?.value ?? '')}
+          onInput={setNovelId}
         />
       </div>
       <div className="form-group">
         <label>Type</label>
         <div className="button-group">
           <button
+            ref={isNew ? undefined : (autoFocusRef as RefObject<HTMLButtonElement>)}
             class={novelType === 'server' ? 'selected' : ''}
             onClick={() => setNovelType('server')}
           >
@@ -167,6 +133,16 @@ export function ChooseNovelModal(props: Props) {
       </div>
       {serverFormContent}
       {textFormContent}
+      <div className="form-group">
+        <label>Text filter</label>
+        <TextField
+          showTextControls
+          value={filter}
+          rows={10}
+          onInput={setFilter}
+          placeholder="e.g. words to match|replacement"
+        />
+      </div>
     </div>
   )
 

@@ -80,3 +80,17 @@ export function splitNovelText(novelText: string): string[][] {
   }
   return chapters.filter(lines => lines.length > 0)
 }
+
+const makeFilterRegex = (word: string) => new RegExp(`(^|\\b)${word}($|\\b)`, 'gi')
+
+export function applyTextFilter(text: string[], filter: string): string[] {
+  const cleanFilters = filter
+    .split('\n')
+    .map(x => x.split('|'))
+    .filter(([match]) => match)
+    .map<[RegExp, string]>(([match, rep]) => [makeFilterRegex(match), rep])
+
+  return text
+    .map(line => cleanFilters.reduce((acc, [regex, rep]) => acc.replace(regex, rep), line).trim())
+    .filter(Boolean)
+}

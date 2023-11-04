@@ -10,8 +10,6 @@ const fetchDoc = (url: string) =>
     .then(res => (res.ok ? res.text() : Promise.reject()))
     .then(html => new DOMParser().parseFromString(html, 'text/html'))
 
-const makeFilterRegex = (word: string) => new RegExp(`(^|\\b)${word}($|\\b)`, 'gi')
-
 interface TypeDef {
   url: string
   sel: string
@@ -57,13 +55,8 @@ const getServerConf = (defaultServer: Server, novelId: string) => {
 
 const chapterCache = new Map<string, string[]>()
 
-export const fetchChapter = async (
-  defaultServer: Server,
-  novelId: string,
-  chapter: number,
-  filter: string[][]
-) => {
-  const cacheKey = defaultServer + novelId + chapter + filter
+export const fetchChapter = async (defaultServer: Server, novelId: string, chapter: number) => {
+  const cacheKey = defaultServer + novelId + chapter
   const cachedChapter = chapterCache.get(cacheKey)
   if (cachedChapter) return cachedChapter
   const conf = getServerConf(defaultServer, novelId)
@@ -72,16 +65,8 @@ export const fetchChapter = async (
   // remove unwanted content from doc before grabbing lines
   qq('script,style', doc).forEach(x => x.remove())
 
-  const cleanFilters = filter
-    .filter(([match]) => match)
-    .map<[RegExp, string]>(([match, rep]) => [makeFilterRegex(match), rep])
-
   const lines = qq(conf.sel, doc)
-    .map(paragraph =>
-      cleanFilters
-        .reduce((acc, [regex, rep]) => acc.replace(regex, rep), paragraph.textContent ?? '')
-        .trim()
-    )
+    .map(paragraph => paragraph.textContent ?? '')
     .filter(Boolean)
   chapterCache.set(cacheKey, lines)
   return lines
