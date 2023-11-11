@@ -286,8 +286,6 @@ a.button {
   grid-area: footer;
 }
 
-/* help me write a script and cron job that uses the `battery maintain [number]` command to keep the battery between 65% and 75%, the current maintain percentage can be read from "$HOME/.battery/maintain.percentage", only call `battery maintain` if the current setting differs */
-
 /* CHAPTER */
 
 .chapter {
