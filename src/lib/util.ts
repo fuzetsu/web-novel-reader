@@ -94,3 +94,7 @@ export function applyTextFilter(text: string[], filter: string): string[] {
     .map(line => cleanFilters.reduce((acc, [regex, rep]) => acc.replace(regex, rep), line).trim())
     .filter(Boolean)
 }
+
+export const notEmpty = <T>(item: T | undefined | null): item is T => {
+  return item != null
+}

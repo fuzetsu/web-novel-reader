@@ -141,7 +141,13 @@ export function App() {
         <div aria-hidden className="center">
           <button onClick={scrollToTop}>Scroll to the top</button>
         </div>
-        <ScrollControl />
+        <ScrollControl
+          moreActions={[
+            loadCount > 1
+              ? { label: `Load less (${loadCount})`, onClick: () => setLoadCount(loadCount - 1) }
+              : null
+          ]}
+        />
       </main>
     </>
   )

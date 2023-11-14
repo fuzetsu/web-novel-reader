@@ -1,10 +1,10 @@
 import { useRef, useState } from 'preact/hooks'
 import { useScroll, useThrottledFn } from '../lib/hooks'
-import { classNames, qq, scrollToBottom, scrollToTop } from '../lib/util'
+import { classNames, notEmpty, qq, scrollToBottom, scrollToTop } from '../lib/util'
 
-type Link = { label: string } & ({ url: string } | { onClick(): void })
+type Action = { label: string } & ({ url: string } | { onClick(): void })
 
-const extraLinks: Link[] = [{ label: 'Home', url: '/' }]
+const defaultActions: Action[] = [{ label: 'Home', url: '/' }]
 
 const getCurrentChapter = () => {
   const chapters = qq<HTMLDivElement>('[data-chapter]')
@@ -17,7 +17,11 @@ const getCurrentChapter = () => {
   return currentChapter?.dataset.chapter
 }
 
-export function ScrollControl() {
+interface Props {
+  moreActions?: (Action | null)[]
+}
+
+export function ScrollControl({ moreActions = [] }: Props) {
   const [scrollingDown, setScrollingDown] = useState(true)
   const [scrollPercentage, setScrollPercentage] = useState('0')
 
@@ -60,6 +64,8 @@ export function ScrollControl() {
     }
   }
 
+  const actions = [...moreActions.filter(notEmpty), ...defaultActions]
+
   return (
     <div
       aria-hidden
@@ -72,8 +78,9 @@ export function ScrollControl() {
         )}
       >
         {currentChapter && <span className="notice">On chapter {currentChapter}</span>}
-        {extraLinks.map(link => (
+        {actions.map(link => (
           <button
+            key={link.label}
             className="scroll-control__button"
             onClick={() => {
               if ('url' in link) location.hash = link.url
