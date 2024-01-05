@@ -34,6 +34,11 @@ const SERVER_CONF = {
       url: 'https://www.wuxiaworld.eu/novel/:novelId',
       sel: (doc: Document) => qq('.mantine-Text-root', doc)[7]?.textContent
     }
+  },
+  freewebnovel: {
+    url: 'https://freewebnovel.com/:novelId/chapter-:chapter.html',
+    sel: '#article p',
+    maxChap: { url: 'https://freewebnovel.com/:novelId.html', sel: '.m-newest1 li a' }
   }
 } as const satisfies { [novelId: string]: TypeDef }
 
