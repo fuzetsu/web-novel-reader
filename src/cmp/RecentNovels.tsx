@@ -26,6 +26,8 @@ export function RecentNovels({ recentNovels, onRemove }: Props) {
       {novels.map(({ id, title, newestChapter }) => (
         <div
           key={id}
+          tabIndex={0}
+          role="button"
           className="recent-novels__list-item"
           onClick={() => resumeNovel(id, newestChapter)}
           onKeyDown={e => e.key === 'Enter' && resumeNovel(id, newestChapter)}
