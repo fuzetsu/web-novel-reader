@@ -36,10 +36,11 @@ export function TextField<T extends number | undefined>({
     return <input ref={fieldRef as RefObject<HTMLInputElement>} {...props} />
   }
 
+  const findTextarea = (elem: EventTarget | null) =>
+    (elem as HTMLElement | undefined)?.closest('.text-area')?.querySelector('textarea')
+
   const setTextAreaCursor = (target: EventTarget | null, pos: 'top' | 'bottom') => {
-    if (!target) return
-    const elem = target as HTMLElement
-    const txt = elem.closest('.text-area')?.querySelector('textarea')
+    const txt = findTextarea(target)
     if (!txt) return
     const { cursor, scroll } =
       pos === 'top' ? { cursor: 0, scroll: 0 } : { cursor: value.length, scroll: txt.scrollHeight }
@@ -47,6 +48,14 @@ export function TextField<T extends number | undefined>({
     txt.setSelectionRange(cursor, cursor)
     txt.scrollTop = scroll
   }
+
+  const clearInput = (target: EventTarget | null) => {
+    const txt = findTextarea(target)
+    if (!txt) return
+    txt.value = ''
+    txt.focus()
+  }
+
   return (
     <div className="text-area">
       <textarea {...props} ref={fieldRef as RefObject<HTMLTextAreaElement>} rows={rows} />
@@ -60,6 +69,7 @@ export function TextField<T extends number | undefined>({
             Prepend
           </button>
           <button onClick={e => setTextAreaCursor(e.target, 'bottom')}>Append</button>
+          <button onClick={e => clearInput(e.target)}>Clear</button>
         </div>
       )}
     </div>
