@@ -143,6 +143,12 @@ a.button {
   display: inline-block;
 }
 
+.icon {
+  height: 22px;
+  width: 22px;
+  vertical-align: middle;
+}
+
 /* APP */
 
 .app {
@@ -205,6 +211,9 @@ a.button {
   border: 1px solid white;
   font-size: 90%;
   pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .scroll-control__show-extra {

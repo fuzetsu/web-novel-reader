@@ -1,6 +1,7 @@
 import { classNames } from 'lib/util'
 import { useEffect, useState } from 'preact/hooks'
 import { DISABLE_AUTO_INPUT_PROPS } from './TextField'
+import { Icon } from './Icon'
 
 interface Props {
   chapter: number
@@ -31,7 +32,7 @@ export function CurrentChapterControl({ chapter, loadCount, maxChapter, onChange
   return (
     <div className="current-chapter-control">
       <button disabled={chapter <= 1} onClick={() => handleChange(previousChapter)}>
-        {loadCount > 1 && previousChapter} &#8592;
+        {loadCount > 1 && previousChapter} <Icon name="arrowLeft" />
       </button>
       <button disabled={loadCount <= 1} onClick={() => onChange(chapter, loadCount - 1)}>
         -
@@ -60,7 +61,7 @@ export function CurrentChapterControl({ chapter, loadCount, maxChapter, onChange
         +
       </button>
       <button disabled={disableNext} onClick={() => handleChange(nextChapter)}>
-        &#8594; {loadCount > 1 && nextChapter}
+        <Icon name="arrowRight" /> {loadCount > 1 && nextChapter}
       </button>
     </div>
   )

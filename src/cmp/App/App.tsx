@@ -7,6 +7,7 @@ import { CurrentChapterControl } from '../CurrentChapterControl'
 import { ScrollControl } from '../ScrollControl'
 import { useNovelState } from './hooks'
 import { Nav } from 'cmp/Nav'
+import { Icon } from 'cmp/Icon'
 
 export function App() {
   const {
@@ -84,7 +85,9 @@ export function App() {
     return (
       <div className="app">
         <Nav title="Recent novels">
-          <button onClick={toggleChooseNovel}>New novel</button>
+          <button onClick={toggleChooseNovel}>
+            Novel <Icon name="plusCircle" />
+          </button>
         </Nav>
         <RecentNovels recentNovels={recentNovels} onRemove={removeRecent} />
         {changeNovelModal}
@@ -98,9 +101,11 @@ export function App() {
       <main className="app">
         <Nav title={novelName || novelId}>
           <a href="#/" className="button">
-            Novels
+            <Icon name="home" />
           </a>
-          <button onClick={toggleChooseNovel}>Manage</button>
+          <button onClick={toggleChooseNovel}>
+            <Icon name="settings" />
+          </button>
         </Nav>
         {chapterControls}
         {newestChapter > currentChapter && (

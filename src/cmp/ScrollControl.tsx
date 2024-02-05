@@ -1,6 +1,7 @@
 import { useRef, useState } from 'preact/hooks'
 import { useScroll, useThrottledFn } from '../lib/hooks'
 import { classNames, notEmpty, qq, scrollToBottom, scrollToTop } from '../lib/util'
+import { Icon } from './Icon'
 
 type Action = { label: string } & ({ url: string } | { onClick(): void })
 
@@ -101,7 +102,7 @@ export function ScrollControl({ moreActions = [] }: Props) {
         {'\u2303'}
       </button>
       <button className="scroll-control__button" onClick={scrollToNextChapter}>
-        {scrollingDown ? '\u25bc' : '\u25b2'} {scrollPercentage}
+        <Icon invert name={scrollingDown ? 'arrowDown' : 'arrowUp'} /> {scrollPercentage}
       </button>
     </div>
   )

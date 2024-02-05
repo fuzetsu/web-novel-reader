@@ -1,4 +1,5 @@
 import { useMemo } from 'preact/hooks'
+import { Icon } from './Icon'
 
 interface Props {
   recentNovels: string[]
@@ -47,7 +48,7 @@ export function RecentNovels({ recentNovels, onRemove }: Props) {
               onRemove(id)
             }}
           >
-            ❌
+            <Icon invert name="trash" />
           </div>
         </div>
       ))}
