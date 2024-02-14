@@ -159,6 +159,10 @@ a.button {
   margin-right: auto;
 }
 
+.app > * {
+  margin-bottom: 15px;
+}
+
 .app__home-button {
   margin-left: -56px;
   margin-right: 10px;

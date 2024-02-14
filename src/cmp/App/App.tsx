@@ -39,7 +39,7 @@ export function App() {
   const clearResume = preventDefault(() => setNewestChapter(currentChapter))
 
   const chapterControls = (
-    <p aria-hidden>
+    <div aria-hidden>
       <CurrentChapterControl
         loadCount={loadCount}
         chapter={currentChapter}
@@ -49,7 +49,7 @@ export function App() {
         }}
         maxChapter={novelType === 'text' ? maxChapter?.value : null}
       />
-    </p>
+    </div>
   )
 
   const [chooseNovelOpen, setChooseNovelOpen] = useState(false)
@@ -109,17 +109,17 @@ export function App() {
         </Nav>
         {chapterControls}
         {newestChapter > currentChapter && (
-          <p aria-hidden className="center">
+          <div aria-hidden className="center">
             <a href="" onClick={resumeNewestChapter}>
               Resume {newestChapter}
             </a>{' '}
             <a href="" onClick={clearResume}>
               (reset)
             </a>
-          </p>
+          </div>
         )}
         {maxChapter && maxChapter.value && (
-          <p aria-hidden className="center">
+          <div aria-hidden className="center">
             <span className="notice">
               {novelType === 'server' ? (
                 <>
@@ -130,7 +130,7 @@ export function App() {
                 <>{maxChapter.value} chapters</>
               )}
             </span>
-          </p>
+          </div>
         )}
         {repeat(loadCount, index => {
           const chapter = currentChapter + index

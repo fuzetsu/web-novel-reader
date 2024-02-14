@@ -25,9 +25,7 @@ interface Props {
 }
 
 export function Icon({ name, invert }: Props) {
-  const svg = icons[name]
-  const svgUrl = `data:image/svg+xml,` + encodeURIComponent(svg)
   const style = invert ? { filter: 'invert(100%)' } : undefined
 
-  return <img className="icon" src={svgUrl} style={style} />
+  return <img className="icon" src={icons[name]} style={style} />
 }

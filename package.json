@@ -8,31 +8,18 @@
     "preact": "^10.11.2"
   },
   "devDependencies": {
+    "@preact/preset-vite": "^2.8.1",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
-    "chokidar-cli": "^3.0.0",
-    "concurrently": "^8.0.1",
-    "esbuild": "^0.19.5",
     "eslint": "^8.38.0",
-    "ncp": "^2.0.0",
-    "npm-run-all": "^4.1.5",
-    "reload": "^3.2.1",
-    "rimraf": "^5.0.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "vite": "^5.1.1",
+    "vite-tsconfig-paths": "^4.3.1"
   },
   "scripts": {
-    "build": "npm-run-all b:*",
+    "build": "vite build",
     "lint": "eslint .",
-    "dev": "npm-run-all b:clean b:make-dir b:html run-dev",
-    "run-dev": "concurrently --raw --kill-others npm:watch:*",
-    "b:clean": "rimraf dist",
-    "b:make-dir": "mkdir dist",
-    "b:html": "ncp index.html dist/index.html",
-    "b:bundle": "esbuild src/index.tsx --bundle --loader:.svg=text --inject:./src/shims/preact.ts --jsx-factory=h --jsx-fragment=Fragment --outfile=dist/bundle.js --minify --sourcemap --analyze",
-    "watch:lint": "chokidar \"./dist/*\" -c \"eslint .\"",
-    "watch:build": "esbuild src/index.tsx --bundle --loader:.svg=text --inject:./src/shims/preact.ts --jsx-factory=h --jsx-fragment=Fragment --outfile=dist/bundle.js --watch --sourcemap --analyze ",
-    "watch:ts": "tsc --watch --preserveWatchOutput",
-    "watch:reload": "reload -b -d dist -p 3333"
+    "dev": "vite"
   },
   "browserslist": [
     ">0.2%",
