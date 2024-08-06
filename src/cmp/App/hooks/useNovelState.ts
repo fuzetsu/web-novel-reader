@@ -23,6 +23,8 @@ type MaxChapter = {
 const SIX_HOURS = 1000 * 60 * 60 * 6
 const shouldCheck = (lastCheck: number) => lastCheck < Date.now() - SIX_HOURS
 
+const CACHE_KEY = 'chapter-cache'
+
 export function useNovelState() {
   const hash = useLocationHash()
 
@@ -39,7 +41,12 @@ export function useNovelState() {
     [novelId]
   )
 
-  const novelKey = (key: string) => `${novelId}-${key}`
+  const novelKey = (key: string, prefix = novelId) => `${prefix}-${key}`
+
+  const [offlineChapters, setOfflineChapters] = usePersistedState<{ [chapter: string]: string[] }>(
+    novelKey(CACHE_KEY),
+    {}
+  )
 
   const [novelType, setNovelType] = usePersistedState<NovelType>(novelKey('type'), 'server')
 
@@ -117,11 +124,14 @@ export function useNovelState() {
     return delayWithCancel(500, () =>
       promiseWithCancel(
         Promise.all(
-          repeat(loadCount, index =>
-            fetchChapter(server, novelId, currentChapter + index)
+          repeat(loadCount, index => {
+            const chapterIndex = currentChapter + index
+            const savedChapter = offlineChapters[chapterIndex]
+            if (savedChapter) return savedChapter
+            return fetchChapter(server, novelId, chapterIndex)
               .then(chapter => applyTextFilter(chapter, filter))
               .catch(() => ['Error fetching chapter.'])
-          )
+          })
         ),
         setChapters
       )
@@ -149,10 +159,30 @@ export function useNovelState() {
     if (novelId) setRecentNovels([novelId, ...recentNovels.filter(id => id !== novelId)])
   }, [novelId])
 
-  const removeRecent = useCallback(
-    (novelId: string) => setRecentNovels(ids => ids.filter(id => id !== novelId)),
-    []
-  )
+  const removeRecent = useCallback((novelId: string) => {
+    setRecentNovels(ids => ids.filter(id => id !== novelId))
+    // explicitly delete cache because it could be large, other stuff can linger
+    localStorage.removeItem(novelKey(CACHE_KEY, novelId))
+  }, [])
+
+  const someCurrentChaptersUnsaved = useMemo(() => {
+    if (chapters.length < loadCount) return false
+    for (let i = 0; i < loadCount; i++) {
+      if (!offlineChapters[i + currentChapter]) return true
+    }
+    return false
+  }, [offlineChapters, currentChapter, loadCount, chapters])
+  const saveCurrentChapters = useCallback(() => {
+    setOfflineChapters(cur =>
+      chapters.reduce(
+        (acc, chapter, index) => {
+          acc[index + currentChapter] = chapter
+          return acc
+        },
+        { ...cur }
+      )
+    )
+  }, [chapters])
 
   return {
     chapters,
@@ -169,6 +199,10 @@ export function useNovelState() {
     recentNovels,
     removeRecent,
     server,
+    offlineChapters,
+    someCurrentChaptersUnsaved,
+    saveCurrentChapters,
+    setOfflineChapters,
     setCurrentChapter,
     setFilter,
     setLoadCount,

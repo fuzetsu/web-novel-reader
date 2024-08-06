@@ -25,6 +25,10 @@ export function App() {
     recentNovels,
     removeRecent,
     server,
+    someCurrentChaptersUnsaved,
+    offlineChapters,
+    setOfflineChapters,
+    saveCurrentChapters,
     setCurrentChapter,
     setFilter,
     setLoadCount,
@@ -37,6 +41,7 @@ export function App() {
 
   const resumeNewestChapter = preventDefault(() => setCurrentChapter(newestChapter))
   const clearResume = preventDefault(() => setNewestChapter(currentChapter))
+  const saveCurrent = preventDefault(saveCurrentChapters)
 
   const chapterControls = (
     <div aria-hidden>
@@ -57,10 +62,11 @@ export function App() {
 
   const changeNovelModal = chooseNovelOpen && (
     <ChooseNovelModal
+      currentChapter={currentChapter}
       state={
         novelType === 'text'
           ? { type: 'text', novelId, novelText, filter }
-          : { type: 'server', novelId, server, filter }
+          : { type: 'server', novelId, server, filter, offlineChapters }
       }
       onClose={() => setChooseNovelOpen(false)}
       onChange={async nextState => {
@@ -74,6 +80,7 @@ export function App() {
         setFilter(nextState.filter)
         if (nextState.type === 'server') {
           setServer(nextState.server)
+          setOfflineChapters(nextState.offlineChapters)
         } else {
           setNovelText(nextState.novelText)
         }
@@ -108,18 +115,27 @@ export function App() {
           </button>
         </Nav>
         {chapterControls}
-        {newestChapter > currentChapter && (
-          <div aria-hidden className="center">
-            <a href="" onClick={resumeNewestChapter}>
-              Resume {newestChapter}
-            </a>{' '}
-            <a href="" onClick={clearResume}>
-              (reset)
-            </a>
-          </div>
-        )}
-        {maxChapter && maxChapter.value && (
-          <div aria-hidden className="center">
+        <div aria-hidden className="button-group flex-center flex-wrap">
+          {newestChapter > currentChapter && (
+            <span className="notice">
+              <a href="" onClick={resumeNewestChapter}>
+                Resume chapter {newestChapter}
+              </a>{' '}
+              or{' '}
+              <a href="" onClick={clearResume}>
+                reset to {currentChapter}
+              </a>
+            </span>
+          )}
+          {someCurrentChaptersUnsaved && (
+            <span className="notice">
+              <a href="" onClick={saveCurrent}>
+                Save chapter{loadCount > 1 ? 's' : ''}
+              </a>{' '}
+              for offline reading?
+            </span>
+          )}
+          {maxChapter && maxChapter.value && (
             <span className="notice">
               {novelType === 'server' ? (
                 <>
@@ -130,8 +146,8 @@ export function App() {
                 <>{maxChapter.value} chapters</>
               )}
             </span>
-          </div>
-        )}
+          )}
+        </div>
         {repeat(loadCount, index => {
           const chapter = currentChapter + index
           const setChapter = index > 0 ? () => setCurrentChapter(chapter) : undefined
@@ -143,7 +159,7 @@ export function App() {
         })}
         {chapterControls}
         <div className="screenreader-only">End of content. Thanks for reading pal.</div>
-        <div aria-hidden className="center">
+        <div aria-hidden className="text-center">
           <button onClick={scrollToTop}>Scroll to the top</button>
         </div>
         <ScrollControl

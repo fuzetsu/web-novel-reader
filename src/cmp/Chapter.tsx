@@ -10,11 +10,11 @@ export function Chapter({ chapter, lines, setChapter }: Props) {
   return (
     <div className="chapter" data-chapter={chapter}>
       <p data-pos={`${chapter}-0`}>
-        <span className="huge">Chapter {chapter} </span>
+        <span className="text-huge">Chapter {chapter} </span>
         {setChapter && (
           <a
             aria-hidden
-            className="small no-wrap"
+            className="text-small no-wrap"
             href=""
             onClick={e => {
               e.preventDefault()

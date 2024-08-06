@@ -1,5 +1,4 @@
-import { RefObject } from 'preact'
-import { JSXInternal } from 'preact/src/jsx'
+import { RefObject, JSX } from 'preact'
 
 interface Props<Rows extends number | undefined> {
   fieldRef?: RefObject<Rows extends undefined ? HTMLInputElement : HTMLTextAreaElement>
@@ -30,7 +29,7 @@ export function TextField<T extends number | undefined>({
     ...rest,
     value,
     onInput: e => onInput((e.target as HTMLInputElement | null)?.value ?? '')
-  } satisfies JSXInternal.HTMLAttributes<HTMLInputElement | HTMLTextAreaElement>
+  } satisfies JSX.HTMLAttributes<HTMLInputElement | HTMLTextAreaElement>
 
   if (rows == null) {
     return <input ref={fieldRef as RefObject<HTMLInputElement>} {...props} />
@@ -60,7 +59,7 @@ export function TextField<T extends number | undefined>({
     <div className="text-area">
       <textarea {...props} ref={fieldRef as RefObject<HTMLTextAreaElement>} rows={rows} />
       {showTextControls && (
-        <div className="button-group small">
+        <div className="button-group text-small">
           <button
             onClick={e => {
               setTextAreaCursor(e.target, 'top')

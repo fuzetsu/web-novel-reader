@@ -34,11 +34,13 @@ html {
   --space-3: 16px;
 }
 
-button, .button {
+button,
+.button {
   cursor: pointer;
 }
 
-.button.selected, button.selected {
+.button.selected,
+button.selected {
   border: 2px solid black;
   box-shadow: 0 0 0 2px lightblue;
   pointer-events: none;
@@ -52,12 +54,15 @@ button:active:not(:disabled) {
   opacity: 0.9;
 }
 
-.button:disabled, button:disabled, input:disabled {
+.button:disabled,
+button:disabled,
+input:disabled {
   background: rgb(151, 151, 151);
   color: rgb(42, 42, 42);
 }
 
-input.error, button.error {
+input.error,
+button.error {
   background: #a04949;
   color: white;
 }
@@ -87,19 +92,28 @@ a.button {
   gap: var(--space-1);
 }
 
-.center {
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.text-center {
   text-align: center;
 }
 
-.small {
+.text-small {
   font-size: 80%;
 }
 
-.large {
+.text-large {
   font-size: 130%;
 }
 
-.huge {
+.text-huge {
   font-size: 200%;
 }
 
@@ -128,7 +142,8 @@ a.button {
   margin-bottom: var(--space-1);
 }
 
-.form-group > input, .form-group textarea {
+.form-group > input,
+.form-group textarea {
   width: 100%;
 }
 

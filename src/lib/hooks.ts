@@ -2,6 +2,7 @@ import { RefObject } from 'preact'
 import {
   Inputs,
   StateUpdater,
+  Dispatch,
   useCallback,
   useEffect,
   useMemo,
@@ -38,10 +39,13 @@ export function useThrottledFn<T extends (...args: never[]) => void>(ms: number,
     (...args: Parameters<T>) => {
       clearTimeout(idRef.current)
       const delta = Date.now() - lastCallRef.current
-      idRef.current = setTimeout(() => {
-        lastCallRef.current = Date.now()
-        fnRef.current(...args)
-      }, Math.max(0, ms - delta))
+      idRef.current = setTimeout(
+        () => {
+          lastCallRef.current = Date.now()
+          fnRef.current(...args)
+        },
+        Math.max(0, ms - delta)
+      )
     },
     [ms]
   )
@@ -89,7 +93,7 @@ export function usePersistedState<T>(key: string, initialValue: T) {
     localStorage.setItem(key, JSON.stringify(newState))
   )
 
-  const update = useCallback<StateUpdater<T>>(
+  const update = useCallback<Dispatch<StateUpdater<T>>>(
     stateUpdate => {
       const newState =
         typeof stateUpdate === 'function'
