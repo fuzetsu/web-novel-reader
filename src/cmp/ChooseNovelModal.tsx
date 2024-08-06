@@ -43,7 +43,11 @@ export function ChooseNovelModal(props: Props) {
   const serverState = state.type === 'server' ? state : null
   const [server, setServer] = useState(serverState?.server ?? 'novel-full')
   const [offlineChapters, setOfflineChapters] = useState(serverState?.offlineChapters ?? {})
-  const offlineChapterKeys = useMemo(() => Object.keys(offlineChapters), [offlineChapters])
+  const { offlineChapterKeys, sizeKb } = useMemo(() => {
+    const offlineChapterKeys = Object.keys(offlineChapters)
+    const sizeKb = ((JSON.stringify(offlineChapters).length * 2) / 1024).toFixed(2)
+    return { offlineChapterKeys, sizeKb }
+  }, [offlineChapters])
   const serverFormDirty =
     novelType === 'server' &&
     (server !== serverState?.server || offlineChapters !== serverState?.offlineChapters)
@@ -154,7 +158,7 @@ export function ChooseNovelModal(props: Props) {
 
       {offlineChapterKeys.length > 0 && (
         <div className="form-group">
-          <label>Saved chapters</label>
+          <label>Saved chapters (approx {sizeKb}KB)</label>
           <div className="button-group">
             {currentChapter > 1 &&
               offlineChapterKeys.some(chapter => Number(chapter) < currentChapter) && (
