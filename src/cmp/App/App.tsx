@@ -29,6 +29,7 @@ export function App() {
     offlineChapters,
     setOfflineChapters,
     saveCurrentChapters,
+    saveNextChapters,
     setCurrentChapter,
     setFilter,
     setLoadCount,
@@ -42,6 +43,12 @@ export function App() {
   const resumeNewestChapter = preventDefault(() => setCurrentChapter(newestChapter))
   const clearResume = preventDefault(() => setNewestChapter(currentChapter))
   const saveCurrent = preventDefault(saveCurrentChapters)
+  const [savingChapters, setSavingChapters] = useState(false)
+  const saveNext10 = preventDefault(async () => {
+    setSavingChapters(true)
+    await saveNextChapters(10)
+    setSavingChapters(false)
+  })
 
   const chapterControls = (
     <div aria-hidden>
@@ -131,6 +138,10 @@ export function App() {
             <span className="notice">
               <a href="" onClick={saveCurrent}>
                 Save chapter{loadCount > 1 ? 's' : ''}
+              </a>
+              {' or '}
+              <a href="" onClick={saveNext10} disabled={savingChapters}>
+                next 10
               </a>{' '}
               for offline reading?
             </span>

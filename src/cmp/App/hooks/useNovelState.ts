@@ -112,6 +112,18 @@ export function useNovelState() {
 
   const [loadCount, setLoadCount] = usePersistedState(novelKey('load-count'), 1)
 
+  const fetchChapterWithCache = useCallback(
+    async (chapter: number) => {
+      if (!novelId) return []
+      const savedChapter = offlineChapters[chapter]
+      if (savedChapter) return savedChapter
+      return fetchChapter(server, novelId, chapter)
+        .then(chapter => applyTextFilter(chapter, filter))
+        .catch(() => ['Error fetching chapter.'])
+    },
+    [offlineChapters, novelId, server, filter]
+  )
+
   const [chapters, setChapters] = useState<string[][]>([])
   useEffect(() => {
     scrollToTop()
@@ -123,16 +135,7 @@ export function useNovelState() {
     }
     return delayWithCancel(500, () =>
       promiseWithCancel(
-        Promise.all(
-          repeat(loadCount, index => {
-            const chapterIndex = currentChapter + index
-            const savedChapter = offlineChapters[chapterIndex]
-            if (savedChapter) return savedChapter
-            return fetchChapter(server, novelId, chapterIndex)
-              .then(chapter => applyTextFilter(chapter, filter))
-              .catch(() => ['Error fetching chapter.'])
-          })
-        ),
+        Promise.all(repeat(loadCount, index => fetchChapterWithCache(currentChapter + index))),
         setChapters
       )
     )
@@ -172,17 +175,36 @@ export function useNovelState() {
     }
     return false
   }, [offlineChapters, currentChapter, loadCount, chapters])
+
   const saveCurrentChapters = useCallback(() => {
     setOfflineChapters(cur =>
       chapters.reduce(
         (acc, chapter, index) => {
-          acc[index + currentChapter] = chapter
+          acc[currentChapter + index] = chapter
           return acc
         },
         { ...cur }
       )
     )
   }, [chapters])
+
+  const saveNextChapters = useCallback(
+    async (amount: number) => {
+      const chapters = await Promise.all(
+        repeat(amount, index => fetchChapterWithCache(currentChapter + index))
+      )
+      setOfflineChapters(cur =>
+        chapters.reduce(
+          (acc, chapter, index) => {
+            acc[currentChapter + index] = chapter
+            return acc
+          },
+          { ...cur }
+        )
+      )
+    },
+    [fetchChapterWithCache, currentChapter]
+  )
 
   return {
     chapters,
@@ -202,6 +224,7 @@ export function useNovelState() {
     offlineChapters,
     someCurrentChaptersUnsaved,
     saveCurrentChapters,
+    saveNextChapters,
     setOfflineChapters,
     setCurrentChapter,
     setFilter,
