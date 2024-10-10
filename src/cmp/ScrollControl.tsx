@@ -1,9 +1,13 @@
+import { JSX } from 'preact'
 import { useRef, useState } from 'preact/hooks'
 import { useScroll, useThrottledFn } from '../lib/hooks'
 import { classNames, notEmpty, qq, scrollToBottom, scrollToTop } from '../lib/util'
 import { Icon } from './Icon'
 
-type Action = { label: string } & ({ url: string } | { onClick(): void })
+type Action = { label: string } & (
+  | { url: string }
+  | { onClick(e: JSX.TargetedMouseEvent<HTMLButtonElement>): void }
+)
 
 const defaultActions: Action[] = [{ label: 'Home', url: '/' }]
 
@@ -83,9 +87,10 @@ export function ScrollControl({ moreActions = [] }: Props) {
           <button
             key={link.label}
             className="scroll-control__button"
-            onClick={() => {
+            onClick={e => {
+              console.log(e)
               if ('url' in link) location.hash = link.url
-              else link.onClick()
+              else link.onClick(e)
             }}
           >
             {link.label}

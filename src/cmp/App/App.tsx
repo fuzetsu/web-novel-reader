@@ -177,6 +177,29 @@ export function App() {
           moreActions={[
             loadCount > 1
               ? { label: `Load less (${loadCount})`, onClick: () => setLoadCount(loadCount - 1) }
+              : null,
+            chapters.length > 0
+              ? {
+                  label: 'Copy to clipboard',
+                  onClick: async e => {
+                    const content = chapters
+                      .map(
+                        (chapter, index) =>
+                          `Chapter ${currentChapter + index}:\n\n` + chapter.join('\n\n')
+                      )
+                      .join('\n\n')
+                    const btn = e.target as HTMLButtonElement
+                    btn.textContent = 'Copying...'
+                    await navigator.clipboard
+                      .writeText(content)
+                      .then(() => (btn.textContent = 'Copied!'))
+                      .catch(err => {
+                        console.error('Failed to copy chapters: ', err)
+                        btn.textContent = 'Failed :('
+                      })
+                    setTimeout(() => (btn.textContent = 'Copy to clipboard'), 1000)
+                  }
+                }
               : null
           ]}
         />
