@@ -4,7 +4,7 @@ import { useScroll, useThrottledFn } from '../lib/hooks'
 import { classNames, notEmpty, qq, scrollToBottom, scrollToTop } from '../lib/util'
 import { Icon } from './Icon'
 
-type Action = { label: string } & (
+type Action = { label: JSX.Element | string } & (
   | { url: string }
   | { onClick(e: JSX.TargetedMouseEvent<HTMLButtonElement>): void }
 )
