@@ -1,3 +1,4 @@
+import { JSX } from 'preact'
 import arrowDown from 'assets/arrow-down.svg'
 import arrowLeft from 'assets/arrow-left.svg'
 import arrowRight from 'assets/arrow-right.svg'
@@ -24,10 +25,12 @@ type Icon = keyof typeof icons
 interface Props {
   name: Icon
   invert?: boolean
+  style?: JSX.CSSProperties
 }
 
-export function Icon({ name, invert }: Props) {
-  const style = invert ? { filter: 'invert(100%)' } : undefined
+export function Icon({ name, invert, style }: Props) {
+  const invertStyle = invert ? { filter: 'invert(100%)' } : undefined
+  const mergedStyle = { ...invertStyle, ...style }
 
-  return <img className="icon" src={icons[name]} style={style} />
+  return <img className="icon" src={icons[name]} style={mergedStyle} />
 }
