@@ -180,7 +180,7 @@ export function App() {
               : null,
             chapters.length > 0
               ? {
-                  label: 'Copy to clipboard',
+                  label: 'Copy',
                   onClick: async e => {
                     const content = chapters
                       .map(
@@ -197,7 +197,7 @@ export function App() {
                         console.error('Failed to copy chapters: ', err)
                         btn.textContent = 'Failed :('
                       })
-                    setTimeout(() => (btn.textContent = 'Copy to clipboard'), 1000)
+                    setTimeout(() => (btn.textContent = 'Copy'), 1000)
                   }
                 }
               : null
