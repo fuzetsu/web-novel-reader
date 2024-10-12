@@ -2,6 +2,7 @@ import arrowDown from 'assets/arrow-down.svg'
 import arrowLeft from 'assets/arrow-left.svg'
 import arrowRight from 'assets/arrow-right.svg'
 import arrowUp from 'assets/arrow-up.svg'
+import clipboard from 'assets/clipboard.svg'
 import home from 'assets/home.svg'
 import plusCircle from 'assets/plus-circle.svg'
 import settings from 'assets/settings.svg'
@@ -12,6 +13,7 @@ const icons = {
   arrowLeft,
   arrowRight,
   arrowUp,
+  clipboard,
   home,
   plusCircle,
   settings,
