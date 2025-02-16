@@ -91,9 +91,9 @@ export function useNovelState() {
   }, [novelId, maxChapter])
 
   const [newestChapter, setNewestChapter] = usePersistedState(novelKey('cur-chap'), 1)
-  useEffect(() => {
-    if (novelId) setNewestChapter(newest => Math.max(newest, currentChapter))
-  }, [currentChapter])
+  if (novelId && currentChapter > newestChapter) {
+    setNewestChapter(currentChapter)
+  }
 
   const [server, setServer] = usePersistedState<Server>(novelKey('server'), 'novel-full')
 

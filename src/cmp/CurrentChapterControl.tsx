@@ -1,5 +1,5 @@
 import { classNames } from 'lib/util'
-import { useEffect, useState } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 import { DISABLE_AUTO_INPUT_PROPS } from './TextField'
 import { Icon } from './Icon'
 
@@ -25,10 +25,6 @@ export function CurrentChapterControl({ chapter, loadCount, maxChapter, onChange
     setChapterInput(String(newChapter))
   }
 
-  useEffect(() => {
-    setChapterInput(String(chapter))
-  }, [chapter])
-
   return (
     <div className="current-chapter-control">
       <button disabled={chapter <= 1} onClick={() => handleChange(previousChapter)}>
@@ -43,7 +39,10 @@ export function CurrentChapterControl({ chapter, loadCount, maxChapter, onChange
         value={
           focused || loadCount === 1 ? chapterInput : `${chapter}-${chapter + (loadCount - 1)}`
         }
-        onFocus={() => setFocused(true)}
+        onFocus={() => {
+          setChapterInput(String(chapter))
+          setFocused(true)
+        }}
         onBlur={() => setFocused(false)}
         onChange={e => {
           if (!(e.target instanceof HTMLInputElement)) return

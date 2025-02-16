@@ -80,6 +80,7 @@ export function usePersistedState<T>(key: string, initialValue: T) {
       const saved = localStorage.getItem(key)
       return (saved && JSON.parse(saved)) ?? initialValue
     } catch (error: unknown) {
+      console.error('usePersistedState error:', error)
       return initialValue
     }
   }, [key])
