@@ -81,7 +81,7 @@ export function splitNovelText(novelText: string): string[][] {
   return chapters.filter(lines => lines.length > 0)
 }
 
-const makeFilterRegex = (word: string) => new RegExp(`(^|\\b)${word}($|\\b)`, 'gi')
+const makeFilterRegex = (word: string) => new RegExp(`(^|\\b)${word}($|\\b)`, 'giu')
 
 export function applyTextFilter(text: string[], filter: string): string[] {
   const cleanFilters = filter
