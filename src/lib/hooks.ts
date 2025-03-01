@@ -70,6 +70,51 @@ export function useLocationHash() {
   return hash
 }
 
-export function autoFocus(element: HTMLElement, accesor: () => boolean) {
-  createEffect(() => accesor() && element.focus())
+export function autoFocus(element: HTMLElement, accessor: () => boolean) {
+  createEffect(() => accessor() && element.focus())
+}
+
+export function trapFocus(elem: HTMLElement, enabled: () => boolean) {
+  const getFocusableElements = () =>
+    Array.from(
+      elem.querySelectorAll<HTMLElement>(
+        [
+          'button:not([disabled])',
+          '[href]:not([disabled])',
+          'input:not([disabled])',
+          'textarea:not([disabled])',
+          'select:not([disabled])',
+          'details:not([disabled])',
+          '[tabindex]:not([tabindex="-1"])',
+        ].join(', '),
+      ),
+    )
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Tab' && enabled()) {
+      const focusableElements = getFocusableElements()
+      if (focusableElements.length === 0) return
+
+      const firstFocusableElement = focusableElements.at(0)
+      const lastFocusableElement = focusableElements.at(-1)
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstFocusableElement) {
+          lastFocusableElement?.focus()
+          e.preventDefault()
+        }
+      } else {
+        if (document.activeElement === lastFocusableElement) {
+          firstFocusableElement?.focus()
+          e.preventDefault()
+        }
+      }
+    }
+  }
+
+  createEffect(() => {
+    getFocusableElements()[0]?.focus()
+    elem.addEventListener('keydown', handleKeyDown)
+    onCleanup(() => elem.removeEventListener('keydown', handleKeyDown))
+  })
 }

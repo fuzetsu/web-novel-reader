@@ -100,7 +100,6 @@ export function ChooseNovelModal(props: Props) {
       <div class="form-group">
         <label>{novelType() === 'text' ? 'Novel name' : 'Novel ID'}</label>
         <TextField
-          autoFocus={isNew()}
           value={novelId()}
           disabled={!isNew()}
           onInput={setNovelId}
