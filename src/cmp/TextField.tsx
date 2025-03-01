@@ -26,18 +26,15 @@ export function TextField<T extends number | undefined>(props: Props<T>) {
       disabled: props.disabled,
       placeholder: props.placeholder,
       onInput: (e: InputEvent) =>
-        props.onInput((e.target as HTMLInputElement | null)?.value ?? ''),
+        props.onInput(
+          (e.currentTarget as HTMLInputElement | HTMLTextAreaElement).value,
+        ),
     }) satisfies JSX.HTMLElementTags['input' | 'textarea']
 
-  const findTextarea = (elem: EventTarget | null) =>
-    (elem as HTMLElement | undefined)
-      ?.closest('.text-area')
-      ?.querySelector('textarea')
+  const findTextarea = (elem: HTMLElement) =>
+    elem.closest('.text-area')?.querySelector('textarea')
 
-  const setTextAreaCursor = (
-    target: EventTarget | null,
-    pos: 'top' | 'bottom',
-  ) => {
+  const setTextAreaCursor = (target: HTMLElement, pos: 'top' | 'bottom') => {
     const txt = findTextarea(target)
     if (!txt) return
     const { cursor, scroll } =
@@ -49,7 +46,7 @@ export function TextField<T extends number | undefined>(props: Props<T>) {
     txt.scrollTop = scroll
   }
 
-  const clearInput = (target: EventTarget | null) => {
+  const clearInput = (target: HTMLElement) => {
     const txt = findTextarea(target)
     if (!txt) return
     txt.value = ''
@@ -68,13 +65,13 @@ export function TextField<T extends number | undefined>(props: Props<T>) {
         <textarea ref={setupAutoFocus} {...inputProps()} rows={props.rows} />
         <Show when={props.showTextControls}>
           <div class="button-group text-small">
-            <button onClick={e => setTextAreaCursor(e.target, 'top')}>
+            <button onClick={e => setTextAreaCursor(e.currentTarget, 'top')}>
               Prepend
             </button>
-            <button onClick={e => setTextAreaCursor(e.target, 'bottom')}>
+            <button onClick={e => setTextAreaCursor(e.currentTarget, 'bottom')}>
               Append
             </button>
-            <button onClick={e => clearInput(e.target)}>Clear</button>
+            <button onClick={e => clearInput(e.currentTarget)}>Clear</button>
           </div>
         </Show>
       </div>

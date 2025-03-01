@@ -57,9 +57,9 @@ export function CurrentChapterControl(props: Props) {
         }}
         onBlur={() => setFocused(false)}
         onChange={e => {
-          if (!(e.target instanceof HTMLInputElement)) return
-          setChapterInput(e.target.value)
-          const userInput = Number(e.target.value)
+          const value = e.currentTarget.value
+          setChapterInput(value)
+          const userInput = Number(value)
           const error = isNaN(userInput) || userInput < 1
           setInputError(error)
           if (!error) handleChapterChange(userInput)

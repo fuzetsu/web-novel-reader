@@ -217,7 +217,7 @@ export function App() {
                           chapter.join('\n\n'),
                       )
                       .join('\n\n')
-                    const btn = e.target as HTMLButtonElement
+                    const btn = e.currentTarget
                     btn.textContent = 'Copying...'
                     await navigator.clipboard
                       .writeText(content)

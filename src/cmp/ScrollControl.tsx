@@ -1,4 +1,3 @@
-import { JSX } from 'solid-js/jsx-runtime'
 import { useScroll } from '../lib/hooks'
 import {
   classNames,
@@ -9,11 +8,11 @@ import {
   throttledFn,
 } from '../lib/util'
 import { Icon } from './Icon'
-import { createSignal, For, Show } from 'solid-js'
+import { createSignal, For, JSX, Show } from 'solid-js'
 
-type Action = { label: JSX.Element | string } & (
+type Action = { label: JSX.Element } & (
   | { url: string }
-  | { onClick(e: MouseEvent): void }
+  | { onClick: JSX.EventHandler<HTMLButtonElement, MouseEvent> }
 )
 
 const defaultActions: Action[] = [{ label: 'Home', url: '/' }]

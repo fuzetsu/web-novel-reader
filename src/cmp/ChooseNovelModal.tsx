@@ -90,20 +90,13 @@ export function ChooseNovelModal(props: Props) {
   const modalContent = (
     <div
       onKeyDown={e => {
-        if (
-          e.key === 'Enter' &&
-          (e.target as HTMLElement).nodeName !== 'TEXTAREA'
-        )
+        if (e.key === 'Enter' && e.target.nodeName !== 'TEXTAREA')
           handleChange()
       }}
     >
       <div class="form-group">
         <label>{novelType() === 'text' ? 'Novel name' : 'Novel ID'}</label>
-        <TextField
-          value={novelId()}
-          disabled={!isNew()}
-          onInput={setNovelId}
-        />
+        <TextField value={novelId()} disabled={!isNew()} onInput={setNovelId} />
       </div>
       <div class="form-group">
         <label>Type</label>
@@ -130,7 +123,7 @@ export function ChooseNovelModal(props: Props) {
               <select
                 value={server()}
                 onChange={e => {
-                  const select = e.target as HTMLSelectElement
+                  const select = e.currentTarget
                   setServer(
                     select.options[select.selectedIndex].value as Server,
                   )
