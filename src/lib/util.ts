@@ -1,9 +1,15 @@
-export const p = <T>(first: T, ...rest: unknown[]) => (console.log(first, ...rest), first)
+export const p = <T>(first: T, ...rest: unknown[]) => (
+  console.log(first, ...rest), first
+)
 
-export const qq = <T extends Element>(query: string, context: Element | Document = document) =>
-  Array.from(context.querySelectorAll<T>(query))
-export const q = <T extends Element>(query: string, context: Element | Document = document) =>
-  context.querySelector<T>(query)
+export const qq = <T extends Element>(
+  query: string,
+  context: Element | Document = document,
+) => Array.from(context.querySelectorAll<T>(query))
+export const q = <T extends Element>(
+  query: string,
+  context: Element | Document = document,
+) => context.querySelector<T>(query)
 
 export function repeat<T>(times: number, mapFn: (index: number) => T) {
   return Array.from({ length: times }, (_, index) => mapFn(index))
@@ -20,7 +26,10 @@ export function delayWithCancel(delay: number, action: () => () => void) {
   }
 }
 
-export function promiseWithCancel<T>(promise: Promise<T>, then: (thing: T) => unknown) {
+export function promiseWithCancel<T>(
+  promise: Promise<T>,
+  then: (thing: T) => unknown,
+) {
   let cancel = false
   promise.then(thing => {
     if (!cancel) then(thing)
@@ -31,7 +40,8 @@ export function promiseWithCancel<T>(promise: Promise<T>, then: (thing: T) => un
 }
 
 export const scrollToTop = () => window.scrollTo(0, 0)
-export const scrollToBottom = () => window.scrollTo(0, document.scrollingElement?.scrollHeight || 0)
+export const scrollToBottom = () =>
+  window.scrollTo(0, document.scrollingElement?.scrollHeight || 0)
 
 export const preventDefault = (fn: () => void) => (evt: Event) => {
   evt.preventDefault()
@@ -39,7 +49,10 @@ export const preventDefault = (fn: () => void) => (evt: Event) => {
 }
 
 export const subURI = (uri: string, subs: { [key: string]: string | number }) =>
-  Object.entries(subs).reduce((acc, [k, v]) => acc.replace(':' + k, encodeURIComponent(v)), uri)
+  Object.entries(subs).reduce(
+    (acc, [k, v]) => acc.replace(':' + k, encodeURIComponent(v)),
+    uri,
+  )
 
 export const classNames = (...names: (string | false | undefined)[]): string =>
   names.filter(Boolean).join(' ')
@@ -53,7 +66,8 @@ const DAY = HOUR * 24
 const WEEK = DAY * 7
 const MONTH = WEEK * 4.5
 const YEAR = MONTH * 12
-const pluralAgo = (thing: string, count: number) => plural(thing, Math.ceil(count)) + ' ago'
+const pluralAgo = (thing: string, count: number) =>
+  plural(thing, Math.ceil(count)) + ' ago'
 export const prettyTime = (dateInput: string | Date | number) => {
   const date = new Date(dateInput)
   const delta = Date.now() - date.getTime()
@@ -81,7 +95,8 @@ export function splitNovelText(novelText: string): string[][] {
   return chapters.filter(lines => lines.length > 0)
 }
 
-const makeFilterRegex = (word: string) => new RegExp(`(^|\\b)${word}($|\\b)`, 'giu')
+const makeFilterRegex = (word: string) =>
+  new RegExp(`(^|\\b)${word}($|\\b)`, 'giu')
 
 export function applyTextFilter(text: string[], filter: string): string[] {
   const cleanFilters = filter
@@ -91,10 +106,34 @@ export function applyTextFilter(text: string[], filter: string): string[] {
     .map<[RegExp, string]>(([match, rep]) => [makeFilterRegex(match), rep])
 
   return text
-    .map(line => cleanFilters.reduce((acc, [regex, rep]) => acc.replace(regex, rep), line).trim())
+    .map(line =>
+      cleanFilters
+        .reduce((acc, [regex, rep]) => acc.replace(regex, rep), line)
+        .trim(),
+    )
     .filter(Boolean)
 }
 
 export const notEmpty = <T>(item: T | undefined | null): item is T => {
   return item != null
+}
+
+export function throttledFn<T extends (...args: never[]) => void>(
+  ms: number,
+  fn: T,
+) {
+  let id: number
+  let lastCall: number
+
+  return (...args: Parameters<T>) => {
+    clearTimeout(id)
+    const delta = Date.now() - lastCall
+    id = setTimeout(
+      () => {
+        lastCall = Date.now()
+        fn(...args)
+      },
+      Math.max(0, ms - delta),
+    )
+  }
 }

@@ -1,48 +1,49 @@
-import { RefObject, JSX } from 'preact'
+import { autoFocus } from '@/lib/hooks'
+import { Show } from 'solid-js'
+import { JSX } from 'solid-js/jsx-runtime'
 
 interface Props<Rows extends number | undefined> {
-  fieldRef?: RefObject<Rows extends undefined ? HTMLInputElement : HTMLTextAreaElement>
   value: string
   placeholder?: string
   rows?: Rows
   disabled?: boolean
   onInput(value: string): void
   showTextControls?: boolean
+  autoFocus?: boolean
 }
 
 export const DISABLE_AUTO_INPUT_PROPS = {
   autoComplete: 'off',
   autoCapitalize: 'off',
-  autoCorrect: 'off'
+  autoCorrect: 'off',
 } as const
 
-export function TextField<T extends number | undefined>({
-  onInput,
-  value,
-  rows,
-  showTextControls,
-  fieldRef,
-  ...rest
-}: Props<T>) {
-  const props = {
-    ...DISABLE_AUTO_INPUT_PROPS,
-    ...rest,
-    value,
-    onInput: e => onInput((e.target as HTMLInputElement | null)?.value ?? '')
-  } satisfies JSX.HTMLAttributes<HTMLInputElement | HTMLTextAreaElement>
-
-  if (rows == null) {
-    return <input ref={fieldRef as RefObject<HTMLInputElement>} {...props} />
-  }
+export function TextField<T extends number | undefined>(props: Props<T>) {
+  const inputProps = () =>
+    ({
+      ...DISABLE_AUTO_INPUT_PROPS,
+      value: props.value,
+      disabled: props.disabled,
+      placeholder: props.placeholder,
+      onInput: (e: InputEvent) =>
+        props.onInput((e.target as HTMLInputElement | null)?.value ?? ''),
+    }) satisfies JSX.HTMLElementTags['input' | 'textarea']
 
   const findTextarea = (elem: EventTarget | null) =>
-    (elem as HTMLElement | undefined)?.closest('.text-area')?.querySelector('textarea')
+    (elem as HTMLElement | undefined)
+      ?.closest('.text-area')
+      ?.querySelector('textarea')
 
-  const setTextAreaCursor = (target: EventTarget | null, pos: 'top' | 'bottom') => {
+  const setTextAreaCursor = (
+    target: EventTarget | null,
+    pos: 'top' | 'bottom',
+  ) => {
     const txt = findTextarea(target)
     if (!txt) return
     const { cursor, scroll } =
-      pos === 'top' ? { cursor: 0, scroll: 0 } : { cursor: value.length, scroll: txt.scrollHeight }
+      pos === 'top'
+        ? { cursor: 0, scroll: 0 }
+        : { cursor: props.value.length, scroll: txt.scrollHeight }
     txt.focus()
     txt.setSelectionRange(cursor, cursor)
     txt.scrollTop = scroll
@@ -55,22 +56,28 @@ export function TextField<T extends number | undefined>({
     txt.focus()
   }
 
+  const setupAutoFocus = (elem: HTMLElement) =>
+    autoFocus(elem, () => props.autoFocus === true)
+
   return (
-    <div className="text-area">
-      <textarea {...props} ref={fieldRef as RefObject<HTMLTextAreaElement>} rows={rows} />
-      {showTextControls && (
-        <div className="button-group text-small">
-          <button
-            onClick={e => {
-              setTextAreaCursor(e.target, 'top')
-            }}
-          >
-            Prepend
-          </button>
-          <button onClick={e => setTextAreaCursor(e.target, 'bottom')}>Append</button>
-          <button onClick={e => clearInput(e.target)}>Clear</button>
-        </div>
-      )}
-    </div>
+    <Show
+      when={props.rows != null}
+      fallback={<input ref={setupAutoFocus} {...inputProps()} />}
+    >
+      <div class="text-area">
+        <textarea ref={setupAutoFocus} {...inputProps()} rows={props.rows} />
+        <Show when={props.showTextControls}>
+          <div class="button-group text-small">
+            <button onClick={e => setTextAreaCursor(e.target, 'top')}>
+              Prepend
+            </button>
+            <button onClick={e => setTextAreaCursor(e.target, 'bottom')}>
+              Append
+            </button>
+            <button onClick={e => clearInput(e.target)}>Clear</button>
+          </div>
+        </Show>
+      </div>
+    </Show>
   )
 }

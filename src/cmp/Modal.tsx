@@ -1,28 +1,39 @@
-import { VNode } from 'preact'
+import { JSXElement, Show } from 'solid-js'
+import { Portal } from 'solid-js/web'
 
 interface Props {
   open: boolean
   onClose?(): void
-  content: VNode
-  header?: VNode
-  footer?: VNode
+  content: JSXElement
+  header?: JSXElement
+  footer?: JSXElement
 }
 
-export function Modal({ open, onClose, content, header, footer }: Props) {
+export function Modal(props: Props) {
   if (!open) return null
 
   return (
-    <div
-      className="modal"
-      onClick={e =>
-        (e.target as HTMLDivElement | undefined)?.className === 'modal' ? onClose?.() : null
-      }
-    >
-      <div className="modal__dialog">
-        {header && <div className="modal__header">{header}</div>}
-        <div className="modal__content">{content}</div>
-        {footer && <div className="modal__footer">{footer}</div>}
-      </div>
-    </div>
+    <Show when={props.open}>
+      <Portal>
+        <div
+          class="modal"
+          onClick={e =>
+            (e.target as HTMLDivElement | undefined)?.className === 'modal'
+              ? props.onClose?.()
+              : null
+          }
+        >
+          <div class="modal__dialog">
+            <Show when={props.header}>
+              <div class="modal__header">{props.header}</div>
+            </Show>
+            <div class="modal__content">{props.content}</div>
+            <Show when={props.footer}>
+              <div class="modal__footer">{props.footer}</div>
+            </Show>
+          </div>
+        </div>
+      </Portal>
+    </Show>
   )
 }
