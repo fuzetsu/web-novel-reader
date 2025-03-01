@@ -11,10 +11,10 @@
     "build": "vite build",
     "serve": "vite preview"
   },
-  "browserslist": ["defaults"],
+  "browserslist": [
+    "defaults"
+  ],
   "devDependencies": {
-    "@solid-devtools/overlay": "^0.33.1",
-    "solid-devtools": "^0.33",
     "typescript": "^5.8.2",
     "vite": "^6.2.0",
     "vite-plugin-solid": "^2.11.6"
