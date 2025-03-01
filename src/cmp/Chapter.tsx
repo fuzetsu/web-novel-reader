@@ -1,4 +1,4 @@
-import { For } from 'solid-js'
+import { Index } from 'solid-js'
 
 interface Props {
   chapter: number
@@ -7,8 +7,6 @@ interface Props {
 }
 
 export function Chapter(props: Props) {
-  const lines = () => props.lines ?? ['Loading...']
-
   return (
     <div class="chapter" data-chapter={props.chapter}>
       <p data-pos={`${props.chapter}-0`}>
@@ -27,11 +25,11 @@ export function Chapter(props: Props) {
           </a>
         )}
       </p>
-      <For each={lines()}>
+      <Index each={props.lines} fallback={'Loading...'}>
         {(line, index) => (
-          <p data-pos={`${props.chapter}-${index() + 1}`}>{line}</p>
+          <p data-pos={`${props.chapter}-${index + 1}`}>{line()}</p>
         )}
-      </For>
+      </Index>
     </div>
   )
 }
