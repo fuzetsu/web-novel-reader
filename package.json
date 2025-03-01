@@ -4,22 +4,12 @@
   "description": "easily read web novels multiple chapters at a time (optimized for ios read screen)",
   "main": "src/index.tsx",
   "author": "fuzetsu",
-  "dependencies": {
-    "preact": "^10.11.2"
-  },
-  "devDependencies": {
-    "@preact/preset-vite": "^2.8.1",
-    "@typescript-eslint/eslint-plugin": "^8",
-    "@typescript-eslint/parser": "^8",
-    "eslint": "^9",
-    "typescript": "^5.0.4",
-    "vite": "^5.1.1",
-    "vite-tsconfig-paths": "^4.3.1"
-  },
+  "type": "module",
   "scripts": {
+    "start": "vite",
+    "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "dev": "vite"
+    "serve": "vite preview"
   },
   "browserslist": [
     ">0.2%",
@@ -27,41 +17,21 @@
     "not ie <= 11",
     "not op_mini all"
   ],
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "browser": true
-    },
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "extends": [
-      "eslint:recommended",
-      "plugin:@typescript-eslint/recommended"
-    ],
-    "ignorePatterns": [
-      "dist/*"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "**/*.ts",
-          "**/*.tsx"
-        ]
-      }
-    ],
-    "rules": {
-      "@typescript-eslint/explicit-module-boundary-types": "off"
-    }
+  "devDependencies": {
+    "@solid-devtools/overlay": "^0.33.1",
+    "solid-devtools": "^0.33",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0",
+    "vite-plugin-solid": "^2.11.6"
+  },
+  "dependencies": {
+    "solid-js": "^1.9.5",
+    "zaftig": "^0.10.0"
   },
   "prettier": {
-    "singleQuote": true,
-    "printWidth": 100,
-    "useTabs": false,
-    "tabWidth": 2,
     "semi": false,
+    "singleQuote": true,
     "arrowParens": "avoid",
-    "trailingComma": "none"
+    "trailingComma": "all"
   }
 }

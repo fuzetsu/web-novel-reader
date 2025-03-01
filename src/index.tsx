@@ -1,6 +1,8 @@
-// import 'preact/debug'
-import { App } from 'cmp/App'
-import { render } from 'preact'
+import { App } from '@/cmp/App'
 import './styles.css'
+import { render } from 'solid-js/web'
+import { attachDevtoolsOverlay } from '@solid-devtools/overlay'
 
-render(<App />, document.body)
+// attachDevtoolsOverlay()
+
+render(() => <App />, document.body)

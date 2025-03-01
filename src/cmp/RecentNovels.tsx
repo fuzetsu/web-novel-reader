@@ -1,4 +1,4 @@
-import { useMemo } from 'preact/hooks'
+import { For, Show } from 'solid-js'
 import { Icon } from './Icon'
 
 interface Props {
@@ -7,51 +7,53 @@ interface Props {
 }
 
 const idToTitle = (id: string) =>
-  id.charAt(0).toUpperCase() + id.slice(1).replace(/-[a-z]/gi, x => ' ' + x.slice(1).toUpperCase())
+  id.charAt(0).toUpperCase() +
+  id.slice(1).replace(/-[a-z]/gi, x => ' ' + x.slice(1).toUpperCase())
 
-const resumeNovel = (id: string, chapter?: string) => (location.hash = `/${id}/${chapter ?? 1}`)
+const resumeNovel = (id: string, chapter?: string) =>
+  (location.hash = `/${id}/${chapter ?? 1}`)
 
-export function RecentNovels({ recentNovels, onRemove }: Props) {
-  const novels = useMemo(
-    () =>
-      recentNovels.map(id => ({
-        id,
-        title: idToTitle(id),
-        newestChapter: localStorage[`${id}-cur-chap`] as string | undefined
-      })),
-    [recentNovels]
-  )
+export function RecentNovels(props: Props) {
+  const novels = () =>
+    props.recentNovels.map(id => ({
+      id,
+      title: idToTitle(id),
+      newestChapter: localStorage[`${id}-cur-chap`] as string | undefined,
+    }))
 
   return (
-    <div className="recent-novels">
-      {novels.map(({ id, title, newestChapter }) => (
-        <div
-          key={id}
-          tabIndex={0}
-          role="button"
-          className="recent-novels__list-item"
-          onClick={() => resumeNovel(id, newestChapter)}
-          onKeyDown={e => e.key === 'Enter' && resumeNovel(id, newestChapter)}
-        >
-          <div className="recent-novels__title">{title}</div>
-          {newestChapter ? (
-            <div className="recent-novels__chapter">Chapter {newestChapter}</div>
-          ) : (
-            <span />
-          )}
+    <div class="recent-novels">
+      <For each={novels()}>
+        {novel => (
           <div
-            role="button"
             tabIndex={0}
-            className="recent-novels__remove"
-            onClick={e => {
-              e.stopPropagation()
-              onRemove(id)
-            }}
+            role="button"
+            class="recent-novels__list-item"
+            onClick={() => resumeNovel(novel.id, novel.newestChapter)}
+            onKeyDown={e =>
+              e.key === 'Enter' && resumeNovel(novel.id, novel.newestChapter)
+            }
           >
-            <Icon invert name="trash" />
+            <div class="recent-novels__title">{novel.title}</div>
+            <Show when={novel.newestChapter} fallback={<span />}>
+              <div class="recent-novels__chapter">
+                Chapter {novel.newestChapter}
+              </div>
+            </Show>
+            <div
+              role="button"
+              tabIndex={0}
+              class="recent-novels__remove"
+              onClick={e => {
+                e.stopPropagation()
+                props.onRemove(novel.id)
+              }}
+            >
+              <Icon invert name="trash" />
+            </div>
           </div>
-        </div>
-      ))}
+        )}
+      </For>
     </div>
   )
 }

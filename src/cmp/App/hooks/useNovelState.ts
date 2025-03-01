@@ -1,16 +1,21 @@
-import { fetchChapter, getMaxChapter, Server } from 'lib/api'
-import { useLocationHash, usePersistedState, useThrottledScroll } from 'lib/hooks'
+import { fetchChapter, getMaxChapter, Server } from '@/lib/api'
+import {
+  useLocationHash,
+  usePersistedState,
+  useThrottledScroll,
+} from '@/lib/hooks'
 import {
   applyTextFilter,
   delayWithCancel,
+  p,
   promiseWithCancel,
   q,
   qq,
   repeat,
   scrollToTop,
-  splitNovelText
-} from 'lib/util'
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
+  splitNovelText,
+} from '@/lib/util'
+import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 
 type NovelType = 'server' | 'text'
 
@@ -29,185 +34,211 @@ export function useNovelState() {
   const hash = useLocationHash()
 
   // extract novel/chapter from url hash with format "#/novelId/chapter"
-  const [novelId, currentChapter] = useMemo(() => {
-    const [novelId, currentChapterStr] = hash.split('/')
-    return [novelId || null, Number(currentChapterStr) || 1]
-  }, [hash])
+  const novelId = () => hash().split('/')[0] ?? null
+  const currentChapter = () => Number(hash().split('/')[1] ?? 1)
 
-  const setNovelId = useCallback(
-    (newNovelId: string) => {
-      if (newNovelId !== novelId) location.hash = `/${newNovelId}/1`
-    },
-    [novelId]
+  const setNovelId = (newNovelId: string) => {
+    if (newNovelId !== novelId()) location.hash = `/${newNovelId}/1`
+  }
+
+  const novelKey =
+    (key: string, prefix: string | null = null) =>
+    () =>
+      `${prefix ?? novelId()}-${key}`
+
+  const [offlineChapters, setOfflineChapters] = usePersistedState<{
+    [chapter: string]: string[]
+  }>(novelKey(CACHE_KEY), {})
+
+  const [novelType, setNovelType] = usePersistedState<NovelType>(
+    novelKey('type'),
+    'server',
   )
-
-  const novelKey = (key: string, prefix = novelId) => `${prefix}-${key}`
-
-  const [offlineChapters, setOfflineChapters] = usePersistedState<{ [chapter: string]: string[] }>(
-    novelKey(CACHE_KEY),
-    {}
-  )
-
-  const [novelType, setNovelType] = usePersistedState<NovelType>(novelKey('type'), 'server')
 
   const [filter, setFilter] = usePersistedState(novelKey('filter'), '')
 
   const [novelText, setNovelText] = usePersistedState(novelKey('text'), '')
-  const novelTextChapters = useMemo(
-    () => splitNovelText(novelText).map(chapter => applyTextFilter(chapter, filter)),
-    [novelText, filter]
+  const novelTextChapters = createMemo(() =>
+    splitNovelText(novelText()).map(chapter =>
+      applyTextFilter(chapter, filter()),
+    ),
   )
 
   const [storedMaxChapter, setMaxChapter] = usePersistedState<MaxChapter>(
     novelKey('max-chap'),
-    null
+    null,
   )
 
-  const maxChapter = useMemo<MaxChapter>(
-    () =>
-      novelType === 'text'
-        ? { checked: Date.now(), value: novelTextChapters.length }
-        : storedMaxChapter,
-    [novelType, novelTextChapters, storedMaxChapter]
+  const maxChapter = createMemo<MaxChapter>(() =>
+    novelType() === 'text'
+      ? { checked: Date.now(), value: novelTextChapters().length }
+      : storedMaxChapter(),
   )
 
-  const checkMaxChapter = useCallback(() => setMaxChapter(null), [])
+  const checkMaxChapter = () => setMaxChapter(null)
 
-  useEffect(() => {
+  createEffect(() => {
     let stop = false
+    const id = novelId()
+    const max = maxChapter()
     const check = async () => {
-      if (!novelId || novelType !== 'server') return
-      if (maxChapter == null || shouldCheck(maxChapter.checked)) {
-        console.log('CHECKING MAX CHAPTER', { server, novelId, maxChapter })
-        const newMax = await getMaxChapter(server, novelId).catch(() => null)
-        console.log('GOT NEW MAX', { server, novelId, newMax })
+      if (!id || novelType() !== 'server') return
+      if (max == null || shouldCheck(max.checked)) {
+        const newMax = await getMaxChapter(server(), id).catch(() => null)
         if (!stop) setMaxChapter({ checked: Date.now(), value: newMax })
       }
     }
     check()
-    return () => {
+
+    onCleanup(() => {
       stop = true
+    })
+  })
+
+  const [newestChapter, setNewestChapter] = usePersistedState(
+    novelKey('cur-chap'),
+    1,
+  )
+  createEffect(() => {
+    if (novelId() && currentChapter() > newestChapter()) {
+      setNewestChapter(currentChapter())
     }
-  }, [novelId, maxChapter])
+  })
 
-  const [newestChapter, setNewestChapter] = usePersistedState(novelKey('cur-chap'), 1)
-  if (novelId && currentChapter > newestChapter) {
-    setNewestChapter(currentChapter)
-  }
-
-  const [server, setServer] = usePersistedState<Server>(novelKey('server'), 'novel-full')
+  const [server, setServer] = usePersistedState<Server>(
+    novelKey('server'),
+    'novel-full',
+  )
 
   const setCurrentChapter = (chapter: number) => {
-    location.hash = `/${novelId}/${chapter}`
+    location.hash = `/${novelId()}/${chapter}`
   }
 
-  const novelName = useMemo(
-    () =>
-      novelId
-        ?.split('-')
-        .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(' '),
-    [novelId]
+  const novelName = createMemo(() =>
+    novelId()
+      ?.split('-')
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' '),
   )
 
   const [loadCount, setLoadCount] = usePersistedState(novelKey('load-count'), 1)
 
-  const fetchChapterWithCache = useCallback(
-    async (chapter: number) => {
-      if (!novelId) return []
-      const savedChapter = offlineChapters[chapter]
-      if (savedChapter) return savedChapter
-      return fetchChapter(server, novelId, chapter)
-        .then(chapter => applyTextFilter(chapter, filter))
-        .catch(() => ['Error fetching chapter.'])
-    },
-    [offlineChapters, novelId, server, filter]
-  )
+  const fetchChapterWithCache = (chapter: number) => {
+    if (!novelId()) return []
+    const savedChapter = offlineChapters()[chapter]
+    if (savedChapter) return savedChapter
+    return fetchChapter(server(), novelId(), chapter).catch(() => [
+      'Error fetching chapter.',
+    ])
+  }
 
-  const [chapters, setChapters] = useState<string[][]>([])
-  useEffect(() => {
+  const [chapters, setChapters] = createSignal<string[][]>([])
+  createEffect(() => {
     scrollToTop()
     setChapters([])
-    if (!novelId) return
-    if (novelType === 'text') {
-      setChapters(novelTextChapters.slice(currentChapter - 1))
+    if (!novelId()) return
+    if (novelType() === 'text') {
+      setChapters(novelTextChapters().slice(currentChapter() - 1))
       return
     }
-    return delayWithCancel(500, () =>
-      promiseWithCancel(
-        Promise.all(repeat(loadCount, index => fetchChapterWithCache(currentChapter + index))),
-        setChapters
-      )
+
+    const count = loadCount()
+    const curChap = currentChapter()
+
+    onCleanup(
+      delayWithCancel(500, () =>
+        promiseWithCancel(
+          Promise.all(
+            repeat(count, index => fetchChapterWithCache(index + curChap)),
+          ),
+          setChapters,
+        ),
+      ),
     )
-  }, [novelId, currentChapter, loadCount, server, filter, novelTextChapters])
+  })
+
+  const filteredChapters = createMemo(() =>
+    chapters().map(chapter => applyTextFilter(chapter, filter())),
+  )
 
   // restore scroll position when chapters load
-  const [lastPos, setLastPos] = usePersistedState<string | null>(novelKey('last-pos'), null)
-  useEffect(() => {
-    if (!lastPos || !chapters.length) return
-    if (lastPos !== `${currentChapter}-0`) q(`[data-pos="${lastPos}"]`)?.scrollIntoView()
+  const [lastPos, setLastPos] = usePersistedState<string | null>(
+    novelKey('last-pos'),
+    null,
+  )
+  createEffect(() => {
+    const pos = lastPos()
+    if (!pos || !chapters().length) return
+    if (pos !== `${currentChapter()}-0`)
+      q(`[data-pos="${pos}"]`)?.scrollIntoView()
     setLastPos(null)
-  }, [lastPos, chapters])
+  })
 
   // track scroll position
   useThrottledScroll(800, () => {
-    const pos = qq<HTMLElement>('[data-pos]').find(pos => pos.getBoundingClientRect().bottom > 0)
-      ?.dataset.pos
-    console.log('saving pos!', pos)
-    if (pos) localStorage.setItem(novelKey('last-pos'), JSON.stringify(pos))
+    const pos = qq<HTMLElement>('[data-pos]').find(
+      pos => pos.getBoundingClientRect().bottom > 0,
+    )?.dataset.pos
+    if (pos) {
+      localStorage.setItem(
+        novelKey('last-pos')(),
+        JSON.stringify(p(pos, 'saving pos')),
+      )
+    }
   })
 
-  const [recentNovels, setRecentNovels] = usePersistedState<string[]>('recent-novels', [])
-  useEffect(() => {
-    if (novelId) setRecentNovels([novelId, ...recentNovels.filter(id => id !== novelId)])
-  }, [novelId])
+  const [recentNovels, setRecentNovels] = usePersistedState<string[]>(
+    () => 'recent-novels',
+    [],
+  )
+  createEffect(() => {
+    const id = novelId()
+    if (id) setRecentNovels(recents => [id, ...recents.filter(x => x !== id)])
+  })
 
-  const removeRecent = useCallback((novelId: string) => {
+  const removeRecent = (novelId: string) => {
     setRecentNovels(ids => ids.filter(id => id !== novelId))
     // explicitly delete cache because it could be large, other stuff can linger
-    localStorage.removeItem(novelKey(CACHE_KEY, novelId))
-  }, [])
+    localStorage.removeItem(novelKey(CACHE_KEY, novelId)())
+  }
 
-  const someCurrentChaptersUnsaved = useMemo(() => {
-    if (chapters.length < loadCount) return false
-    for (let i = 0; i < loadCount; i++) {
-      if (!offlineChapters[i + currentChapter]) return true
+  const someCurrentChaptersUnsaved = createMemo(() => {
+    if (chapters().length < loadCount()) return false
+    for (let i = 0; i < loadCount(); i++) {
+      if (!offlineChapters()[i + currentChapter()]) return true
     }
     return false
-  }, [offlineChapters, currentChapter, loadCount, chapters])
+  })
 
-  const saveCurrentChapters = useCallback(() => {
+  const saveCurrentChapters = () => {
+    setOfflineChapters(cur =>
+      chapters().reduce(
+        (acc, chapter, index) => {
+          acc[currentChapter() + index] = chapter
+          return acc
+        },
+        { ...cur },
+      ),
+    )
+  }
+
+  const saveNextChapters = async (amount: number) => {
+    const chapters = await Promise.all(
+      repeat(amount, index => fetchChapterWithCache(currentChapter() + index)),
+    )
     setOfflineChapters(cur =>
       chapters.reduce(
         (acc, chapter, index) => {
-          acc[currentChapter + index] = chapter
+          acc[currentChapter() + index] = applyTextFilter(chapter, filter())
           return acc
         },
-        { ...cur }
-      )
+        { ...cur },
+      ),
     )
-  }, [chapters])
-
-  const saveNextChapters = useCallback(
-    async (amount: number) => {
-      const chapters = await Promise.all(
-        repeat(amount, index => fetchChapterWithCache(currentChapter + index))
-      )
-      setOfflineChapters(cur =>
-        chapters.reduce(
-          (acc, chapter, index) => {
-            acc[currentChapter + index] = chapter
-            return acc
-          },
-          { ...cur }
-        )
-      )
-    },
-    [fetchChapterWithCache, currentChapter]
-  )
+  }
 
   return {
-    chapters,
+    chapters: filteredChapters,
     checkMaxChapter,
     currentChapter,
     filter,
@@ -233,6 +264,6 @@ export function useNovelState() {
     setNovelId,
     setNovelText,
     setNovelType,
-    setServer
+    setServer,
   }
 }

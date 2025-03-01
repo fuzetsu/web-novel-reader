@@ -1,15 +1,14 @@
-import { ComponentChildren } from 'preact'
+import { ParentProps } from 'solid-js'
 
-interface Props {
+interface Props extends ParentProps {
   title: string
-  children: ComponentChildren
 }
 
-export function Nav({ title, children }: Props) {
+export function Nav(props: Props) {
   return (
-    <nav aria-hidden className="nav">
-      <span className="nav__title">{title}</span>
-      <div className="nav__actions">{children}</div>
+    <nav aria-hidden class="nav">
+      <span class="nav__title">{props.title}</span>
+      <div class="nav__actions">{props.children}</div>
     </nav>
   )
 }

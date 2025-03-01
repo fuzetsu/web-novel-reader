@@ -1,35 +1,37 @@
+import { For } from 'solid-js'
+
 interface Props {
   chapter: number
   setChapter?(): void
   lines?: string[]
 }
 
-export function Chapter({ chapter, lines, setChapter }: Props) {
-  if (!lines) lines = [`Loading...`]
+export function Chapter(props: Props) {
+  const lines = () => props.lines ?? ['Loading...']
 
   return (
-    <div className="chapter" data-chapter={chapter}>
-      <p data-pos={`${chapter}-0`}>
-        <span className="text-huge">Chapter {chapter} </span>
-        {setChapter && (
+    <div class="chapter" data-chapter={props.chapter}>
+      <p data-pos={`${props.chapter}-0`}>
+        <span class="text-huge">Chapter {props.chapter} </span>
+        {props.setChapter && (
           <a
             aria-hidden
-            className="text-small no-wrap"
+            class="text-small no-wrap"
             href=""
             onClick={e => {
               e.preventDefault()
-              setChapter()
+              props.setChapter!()
             }}
           >
             Set chapter
           </a>
         )}
       </p>
-      {lines.map((line, index) => (
-        <p key={index} data-pos={`${chapter}-${index + 1}`}>
-          {line}
-        </p>
-      ))}
+      <For each={lines()}>
+        {(line, index) => (
+          <p data-pos={`${props.chapter}-${index() + 1}`}>{line}</p>
+        )}
+      </For>
     </div>
   )
 }

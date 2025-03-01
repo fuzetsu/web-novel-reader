@@ -1,12 +1,19 @@
-import { JSX } from 'preact'
-import { useRef, useState } from 'preact/hooks'
-import { useScroll, useThrottledFn } from '../lib/hooks'
-import { classNames, notEmpty, qq, scrollToBottom, scrollToTop } from '../lib/util'
+import { JSX } from 'solid-js/jsx-runtime'
+import { useScroll } from '../lib/hooks'
+import {
+  classNames,
+  notEmpty,
+  qq,
+  scrollToBottom,
+  scrollToTop,
+  throttledFn,
+} from '../lib/util'
 import { Icon } from './Icon'
+import { createSignal, For, Show } from 'solid-js'
 
 type Action = { label: JSX.Element | string } & (
   | { url: string }
-  | { onClick(e: JSX.TargetedMouseEvent<HTMLButtonElement>): void }
+  | { onClick(e: MouseEvent): void }
 )
 
 const defaultActions: Action[] = [{ label: 'Home', url: '/' }]
@@ -26,17 +33,19 @@ interface Props {
   moreActions?: (Action | null)[]
 }
 
-export function ScrollControl({ moreActions = [] }: Props) {
-  const [scrollingDown, setScrollingDown] = useState(true)
-  const [scrollPercentage, setScrollPercentage] = useState('0')
+export function ScrollControl(props: Props) {
+  const [scrollingDown, setScrollingDown] = createSignal(true)
+  const [scrollPercentage, setScrollPercentage] = createSignal('0')
 
-  const [currentChapter, setCurrentChapter] = useState(getCurrentChapter)
+  const [currentChapter, setCurrentChapter] = createSignal(getCurrentChapter())
 
-  const [showExtra, setShowExtra] = useState(false)
+  const [showExtra, setShowExtra] = createSignal(false)
 
-  const updateCurrentChapter = useThrottledFn(300, () => setCurrentChapter(getCurrentChapter()))
+  const updateCurrentChapter = throttledFn(300, () =>
+    setCurrentChapter(getCurrentChapter()),
+  )
 
-  const lastScroll = useRef(0)
+  let lastScroll: number
   useScroll(() => {
     const scrollElem = document.scrollingElement
     if (scrollElem) {
@@ -44,18 +53,19 @@ export function ScrollControl({ moreActions = [] }: Props) {
       const curScroll = scrollTop + window.innerHeight
       setScrollPercentage(((curScroll / scrollHeight) * 100).toFixed(0))
       setScrollingDown(
-        (curScroll > lastScroll.current && curScroll < scrollHeight) || scrollTop === 0
+        (curScroll > lastScroll && curScroll < scrollHeight) || scrollTop === 0,
       )
-      lastScroll.current = curScroll
+      lastScroll = curScroll
     }
     updateCurrentChapter()
   })
 
   const scrollToNextChapter = () => {
     const chapters = qq('[data-chapter]')
-    if (scrollingDown) {
+    if (scrollingDown()) {
       const nextChapter = chapters.find(
-        chapter => chapter.getBoundingClientRect().top - window.innerHeight > -10
+        chapter =>
+          chapter.getBoundingClientRect().top - window.innerHeight > -10,
       )
       if (nextChapter) nextChapter.scrollIntoView()
       else scrollToBottom()
@@ -69,45 +79,54 @@ export function ScrollControl({ moreActions = [] }: Props) {
     }
   }
 
-  const actions = [...moreActions.filter(notEmpty), ...defaultActions]
+  const actions = () => [
+    ...(props.moreActions ?? []).filter(notEmpty),
+    ...defaultActions,
+  ]
 
   return (
     <div
       aria-hidden
-      className={classNames('scroll-control', showExtra && 'scroll-control--extra-visible')}
+      class={classNames(
+        'scroll-control',
+        showExtra() && 'scroll-control--extra-visible',
+      )}
     >
       <div
-        className={classNames(
+        class={classNames(
           'scroll-control__extra',
-          showExtra && 'scroll-control__extra--visible'
+          showExtra() && 'scroll-control__extra--visible',
         )}
       >
-        {currentChapter && <span className="notice">On chapter {currentChapter}</span>}
-        {actions.map(link => (
-          <button
-            key={link.label}
-            className="scroll-control__button"
-            onClick={e => {
-              console.log(e)
-              if ('url' in link) location.hash = link.url
-              else link.onClick(e)
-            }}
-          >
-            {link.label}
-          </button>
-        ))}
+        <Show when={currentChapter()}>
+          <span class="notice">On chapter {currentChapter()}</span>
+        </Show>
+        <For each={actions()}>
+          {link => (
+            <button
+              class="scroll-control__button"
+              onClick={e => {
+                if ('url' in link) location.hash = link.url
+                else link.onClick(e)
+              }}
+            >
+              {link.label}
+            </button>
+          )}
+        </For>
       </div>
       <button
-        className={classNames(
+        class={classNames(
           'scroll-control__show-extra',
-          showExtra && 'scroll-control__show-extra--upside-down'
+          showExtra() && 'scroll-control__show-extra--upside-down',
         )}
-        onClick={() => setShowExtra(!showExtra)}
+        onClick={() => setShowExtra(!showExtra())}
       >
         {'\u2303'}
       </button>
-      <button className="scroll-control__button" onClick={scrollToNextChapter}>
-        <Icon invert name={scrollingDown ? 'arrowDown' : 'arrowUp'} /> {scrollPercentage}
+      <button class="scroll-control__button" onClick={scrollToNextChapter}>
+        <Icon invert name={scrollingDown() ? 'arrowDown' : 'arrowUp'} />{' '}
+        {scrollPercentage()}
       </button>
     </div>
   )
