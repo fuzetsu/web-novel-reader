@@ -11,12 +11,7 @@
     "build": "vite build",
     "serve": "vite preview"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
+  "browserslist": ["defaults"],
   "devDependencies": {
     "@solid-devtools/overlay": "^0.33.1",
     "solid-devtools": "^0.33",
@@ -25,8 +20,7 @@
     "vite-plugin-solid": "^2.11.6"
   },
   "dependencies": {
-    "solid-js": "^1.9.5",
-    "zaftig": "^0.10.0"
+    "solid-js": "^1.9.5"
   },
   "prettier": {
     "semi": false,
