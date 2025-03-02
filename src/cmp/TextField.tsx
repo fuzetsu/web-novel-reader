@@ -18,7 +18,7 @@ export const DISABLE_AUTO_INPUT_PROPS = {
   autoCorrect: 'off',
 } as const
 
-export function TextField<T extends number | undefined>(props: Props<T>) {
+export function TextField<Rows extends number | undefined>(props: Props<Rows>) {
   const inputProps = () =>
     ({
       ...DISABLE_AUTO_INPUT_PROPS,
