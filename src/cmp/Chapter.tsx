@@ -1,4 +1,4 @@
-import { Index } from 'solid-js'
+import { Index, Show } from 'solid-js'
 
 interface Props {
   chapter: number
@@ -11,7 +11,7 @@ export function Chapter(props: Props) {
     <div class="chapter" data-chapter={props.chapter}>
       <p data-pos={`${props.chapter}-0`}>
         <span class="text-huge">Chapter {props.chapter} </span>
-        {props.setChapter && (
+        <Show when={props.setChapter}>
           <a
             aria-hidden
             class="text-small no-wrap"
@@ -23,9 +23,9 @@ export function Chapter(props: Props) {
           >
             Set chapter
           </a>
-        )}
+        </Show>
       </p>
-      <Index each={props.lines} fallback={'Loading...'}>
+      <Index each={props.lines} fallback="Loading...">
         {(line, index) => (
           <p data-pos={`${props.chapter}-${index + 1}`}>{line()}</p>
         )}
