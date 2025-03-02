@@ -113,7 +113,7 @@ export function trapFocus(elem: HTMLElement, enabled: () => boolean) {
   }
 
   createEffect(() => {
-    getFocusableElements()[0]?.focus()
+    getFocusableElements().at(0)?.focus()
     elem.addEventListener('keydown', handleKeyDown)
     onCleanup(() => elem.removeEventListener('keydown', handleKeyDown))
   })

@@ -130,7 +130,7 @@ export function App() {
     >
       {changeNovelModal()}
       <main class="app">
-        <Nav title={novelName() || novelId()}>
+        <Nav title={novelName() || novelId()!}>
           <a href="#/" class="button">
             <Icon name="home" />
           </a>

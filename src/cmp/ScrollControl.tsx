@@ -24,7 +24,7 @@ const getCurrentChapter = () => {
       const chapterTop = chapter.offsetTop
       const chapterBottom = chapterTop + chapter.offsetHeight
       return window.scrollY >= chapterTop && window.scrollY < chapterBottom
-    }) ?? chapters[0]
+    }) ?? chapters.at(0)
   return currentChapter?.dataset.chapter
 }
 
@@ -72,7 +72,7 @@ export function ScrollControl(props: Props) {
       const nextIndex = chapters
         .reverse()
         .findIndex(chapter => chapter.getBoundingClientRect().top < -10)
-      const nextChapter: Element | undefined = chapters[nextIndex]
+      const nextChapter = chapters.at(nextIndex)
       if (!nextChapter || nextIndex + 1 - chapters.length === 0) scrollToTop()
       else nextChapter.scrollIntoView()
     }

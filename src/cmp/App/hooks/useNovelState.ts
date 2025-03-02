@@ -34,7 +34,7 @@ export function useNovelState() {
   const hash = useLocationHash()
 
   // extract novel/chapter from url hash with format "#/novelId/chapter"
-  const novelId = () => hash().split('/')[0] ?? null
+  const novelId = () => hash().split('/').at(0) ?? null
   const currentChapter = () => Number(hash().split('/')[1] ?? 1)
 
   const setNovelId = (newNovelId: string) => {
@@ -124,10 +124,11 @@ export function useNovelState() {
   const [loadCount, setLoadCount] = usePersistedState(novelKey('load-count'), 1)
 
   const fetchChapterWithCache = (chapter: number) => {
-    if (!novelId()) return []
+    const id = novelId()
+    if (!id) return []
     const savedChapter = offlineChapters()[chapter]
     if (savedChapter) return savedChapter
-    return fetchChapter(server(), novelId(), chapter).catch(() => [
+    return fetchChapter(server(), id, chapter).catch(() => [
       'Error fetching chapter.',
     ])
   }
