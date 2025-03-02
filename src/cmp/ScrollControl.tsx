@@ -1,4 +1,4 @@
-import { useScroll } from '../lib/hooks'
+import { useThrottledScroll } from '../lib/hooks'
 import {
   classNames,
   notEmpty,
@@ -40,12 +40,12 @@ export function ScrollControl(props: Props) {
 
   const [showExtra, setShowExtra] = createSignal(false)
 
-  const updateCurrentChapter = throttledFn(300, () =>
+  const updateCurrentChapter = throttledFn(500, () =>
     setCurrentChapter(getCurrentChapter()),
   )
 
   let lastScroll: number
-  useScroll(() => {
+  useThrottledScroll(100, () => {
     const scrollElem = document.scrollingElement
     if (scrollElem) {
       const { scrollHeight, scrollTop } = scrollElem
