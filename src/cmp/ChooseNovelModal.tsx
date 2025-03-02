@@ -67,7 +67,7 @@ export function ChooseNovelModal(props: Props) {
     serverFormDirty() ||
     textFormDirty() ||
     novelType() !== props.state.type ||
-    novelId() !== props.state.novelId ||
+    cleanNovelId() !== props.state.novelId ||
     filter() !== props.state.filter
 
   const handleChange = () => {
