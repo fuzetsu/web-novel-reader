@@ -274,6 +274,13 @@ a.button {
   gap: 4px;
 }
 
+.scroll-control__button:hover,
+.scroll-control__button:focus-visible,
+.scroll-control__button:active {
+  background: var(--color-muted);
+  opacity: 1 !important;
+}
+
 .scroll-control__show-extra {
   color: var(--color-text);
   background: transparent;
