@@ -25,7 +25,7 @@ export function Chapter(props: Props) {
           </a>
         </Show>
       </p>
-      <Index each={props.lines} fallback="Loading...">
+      <Index each={props.lines} fallback={<p>Loading...</p>}>
         {(line, index) => (
           <p data-pos={`${props.chapter}-${index + 1}`}>{line()}</p>
         )}
