@@ -52,7 +52,7 @@ export function CurrentChapterControl(props: Props) {
             : `${props.chapter}-${props.chapter + (props.loadCount - 1)}`
         }
         onFocus={() => {
-          setChapterInput(String(props.chapter))
+          if (!inputError()) setChapterInput(String(props.chapter))
           setFocused(true)
         }}
         onBlur={() => setFocused(false)}
