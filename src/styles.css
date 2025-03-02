@@ -29,7 +29,7 @@ html {
   background: var(--color-bg, black);
   color: var(--color-text, white);
   font-size: 18px;
-  
+
   /* Color Variables */
   --color-bg: black;
   --color-text: white;
@@ -167,8 +167,8 @@ a.button {
 
 .notice {
   font-size: 0.75em;
-  color: white;
-  background-color: #555;
+  color: var(--color-text);
+  background-color: var(--color-muted);
   border-radius: var(--space-2);
   padding: var(--space-1) var(--space-2);
   display: inline-block;
@@ -239,8 +239,8 @@ a.button {
 }
 
 .scroll-control__button {
-  background: black;
-  color: white;
+  background: var(--color-bg);
+  color: var(--color-text);
   border: 1px solid white;
   font-size: 90%;
   pointer-events: auto;
@@ -250,7 +250,7 @@ a.button {
 }
 
 .scroll-control__show-extra {
-  color: white;
+  color: var(--color-text);
   background: transparent;
   border: none;
   padding-right: 18px;
