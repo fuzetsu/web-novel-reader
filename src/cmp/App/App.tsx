@@ -126,10 +126,10 @@ export function App() {
       fallback={
         <div class="app">
           <Nav title="Recent novels">
-            {toggleThemeButton()}
             <button onClick={toggleChooseNovel}>
               Novel <Icon name="plusCircle" />
             </button>
+            {toggleThemeButton()}
           </Nav>
           <RecentNovels recentNovels={recentNovels()} onRemove={removeRecent} />
           {changeNovelModal()}
@@ -139,13 +139,13 @@ export function App() {
       {changeNovelModal()}
       <main class="app">
         <Nav title={novelName() || novelId()!}>
-          {toggleThemeButton()}
           <a href="#/" class="button">
             <Icon name="home" />
           </a>
           <button onClick={toggleChooseNovel}>
             <Icon name="settings" />
           </button>
+          {toggleThemeButton()}
         </Nav>
         {chapterControls()}
         <div aria-hidden class="button-group flex-center flex-wrap">
