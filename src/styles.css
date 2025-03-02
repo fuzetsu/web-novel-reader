@@ -208,7 +208,7 @@ a.button {
 /* APP */
 
 .app {
-  padding: var(--space-3);
+  padding: var(--space-4);
   margin-bottom: 100px;
   max-width: 800px;
   margin-left: auto;

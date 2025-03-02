@@ -8,7 +8,7 @@ import { useNovelState } from './hooks'
 import { Nav } from '@/cmp/Nav'
 import { Icon } from '@/cmp/Icon'
 import { createSignal, Index, Show } from 'solid-js'
-import { setTheme, theme } from '@/lib/theme'
+import { cycleTheme, getThemeIcon } from '@/lib/theme'
 
 export function App() {
   const {
@@ -55,8 +55,8 @@ export function App() {
   })
 
   const toggleThemeButton = () => (
-    <button onClick={() => setTheme(t => (t === 'light' ? 'dark' : 'light'))}>
-      <Icon name={theme() === 'light' ? 'moon' : 'sun'} />
+    <button onClick={cycleTheme}>
+      <Icon name={getThemeIcon()} />
     </button>
   )
 

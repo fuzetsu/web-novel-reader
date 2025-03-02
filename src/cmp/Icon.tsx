@@ -10,6 +10,7 @@ import settings from '@/assets/settings.svg'
 import trash from '@/assets/trash.svg'
 import moon from '@/assets/moon.svg'
 import sun from '@/assets/sun.svg'
+import monitor from '@/assets/monitor.svg'
 
 const icons = {
   arrowDown,
@@ -23,11 +24,12 @@ const icons = {
   trash,
   moon,
   sun,
+  monitor,
 } as const
-type Icon = keyof typeof icons
+export type IconName = keyof typeof icons
 
 interface Props {
-  name: Icon
+  name: IconName
   invert?: boolean
   style?: JSX.CSSProperties
 }
