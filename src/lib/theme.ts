@@ -4,13 +4,11 @@ export const [theme, setTheme] = createSignal<'light' | 'dark'>('dark')
 
 createEffect(() => {
   const query = window.matchMedia('(prefers-color-scheme: dark)')
-  setTheme(query.matches ? 'dark' : 'light')
-
-  const handler = (e: MediaQueryListEvent) => {
-    setTheme(e.matches ? 'dark' : 'light')
-  }
-  query.addEventListener('change', handler)
-  onCleanup(() => query.removeEventListener('change', handler))
+  const update = (q: { matches: boolean }) =>
+    setTheme(q.matches ? 'dark' : 'light')
+  update(query)
+  query.addEventListener('change', update)
+  onCleanup(() => query.removeEventListener('change', update))
 })
 
 createEffect(() => {

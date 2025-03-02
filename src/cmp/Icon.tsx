@@ -1,3 +1,4 @@
+import { JSX } from 'solid-js/jsx-runtime'
 import arrowDown from '@/assets/arrow-down.svg'
 import arrowLeft from '@/assets/arrow-left.svg'
 import arrowRight from '@/assets/arrow-right.svg'
@@ -9,7 +10,6 @@ import settings from '@/assets/settings.svg'
 import trash from '@/assets/trash.svg'
 import moon from '@/assets/moon.svg'
 import sun from '@/assets/sun.svg'
-import { JSX } from 'solid-js/jsx-runtime'
 
 const icons = {
   arrowDown,
