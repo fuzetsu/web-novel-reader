@@ -200,12 +200,6 @@ export function App() {
         </div>
         <ScrollControl
           moreActions={[
-            loadCount() > 1
-              ? {
-                  label: `Load less (${loadCount()})`,
-                  onClick: () => setLoadCount(loadCount() - 1),
-                }
-              : null,
             chapters().length > 0
               ? {
                   label: 'Copy',
@@ -228,6 +222,12 @@ export function App() {
                       })
                     setTimeout(() => (btn.textContent = 'Copy'), 1000)
                   },
+                }
+              : null,
+            loadCount() > 1
+              ? {
+                  label: `Load less (${loadCount()})`,
+                  onClick: () => setLoadCount(loadCount() - 1),
                 }
               : null,
           ]}
