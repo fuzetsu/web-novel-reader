@@ -7,6 +7,8 @@ import home from '@/assets/home.svg'
 import plusCircle from '@/assets/plus-circle.svg'
 import settings from '@/assets/settings.svg'
 import trash from '@/assets/trash.svg'
+import moon from '@/assets/moon.svg'
+import sun from '@/assets/sun.svg'
 import { JSX } from 'solid-js/jsx-runtime'
 
 const icons = {
@@ -19,6 +21,8 @@ const icons = {
   plusCircle,
   settings,
   trash,
+  moon,
+  sun,
 } as const
 type Icon = keyof typeof icons
 

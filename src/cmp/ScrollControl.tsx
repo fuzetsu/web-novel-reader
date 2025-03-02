@@ -1,3 +1,4 @@
+import { theme } from '@/lib/theme'
 import { useThrottledScroll } from '../lib/hooks'
 import {
   classNames,
@@ -124,7 +125,10 @@ export function ScrollControl(props: Props) {
         {'\u2303'}
       </button>
       <button class="scroll-control__button" onClick={scrollToNextChapter}>
-        <Icon invert name={scrollingDown() ? 'arrowDown' : 'arrowUp'} />{' '}
+        <Icon
+          invert={theme() === 'dark'}
+          name={scrollingDown() ? 'arrowDown' : 'arrowUp'}
+        />{' '}
         {scrollPercentage()}
       </button>
     </div>

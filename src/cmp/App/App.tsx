@@ -8,6 +8,7 @@ import { useNovelState } from './hooks'
 import { Nav } from '@/cmp/Nav'
 import { Icon } from '@/cmp/Icon'
 import { createSignal, Index, Show } from 'solid-js'
+import { setTheme, theme } from '@/lib/theme'
 
 export function App() {
   const {
@@ -52,6 +53,12 @@ export function App() {
     await saveNextChapters(10)
     setSavingChapters(false)
   })
+
+  const toggleThemeButton = () => (
+    <button onClick={() => setTheme(t => (t === 'light' ? 'dark' : 'light'))}>
+      <Icon name={theme() === 'light' ? 'moon' : 'sun'} />
+    </button>
+  )
 
   const chapterControls = () => (
     <div aria-hidden>
@@ -119,6 +126,7 @@ export function App() {
       fallback={
         <div class="app">
           <Nav title="Recent novels">
+            {toggleThemeButton()}
             <button onClick={toggleChooseNovel}>
               Novel <Icon name="plusCircle" />
             </button>
@@ -131,6 +139,7 @@ export function App() {
       {changeNovelModal()}
       <main class="app">
         <Nav title={novelName() || novelId()!}>
+          {toggleThemeButton()}
           <a href="#/" class="button">
             <Icon name="home" />
           </a>

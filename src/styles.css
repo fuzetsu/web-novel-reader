@@ -34,15 +34,12 @@ html {
   --space-1: 6px;
   --space-2: 10px;
   --space-3: 16px;
-}
 
-/* DARK THEME (now explicitly defined) */
-html.dark-theme {
   --color-bg: black;
   --color-text: white;
   --color-surface: #222;
-  --color-muted: #555;
-  --color-accent: lightblue;
+  --color-muted: #444;
+  --color-accent: rgb(173, 216, 230);
   --color-interactive: #efefef;
   --color-interactive-text: black;
   --color-disabled: rgb(151, 151, 151);
@@ -50,34 +47,17 @@ html.dark-theme {
   --color-error: #a04949;
 }
 
-/* LIGHT THEME */
 html.light-theme {
   --color-bg: white;
   --color-text: black;
   --color-surface: #f0f0f0;
-  --color-muted: #aaa;
+  --color-muted: #eee;
   --color-accent: darkblue;
   --color-interactive: #e0e0e0;
   --color-interactive-text: black;
   --color-disabled: rgb(200, 200, 200);
   --color-disabled-text: rgb(100, 100, 100);
   --color-error: #ff4444;
-}
-
-/* SYSTEM PREFERENCE THEME */
-@media (prefers-color-scheme: light) {
-  html:not(.dark-theme) {
-    --color-bg: white;
-    --color-text: black;
-    --color-surface: #f0f0f0;
-    --color-muted: #aaa;
-    --color-accent: darkblue;
-    --color-interactive: #e0e0e0;
-    --color-interactive-text: black;
-    --color-disabled: rgb(200, 200, 200);
-    --color-disabled-text: rgb(100, 100, 100);
-    --color-error: #ff4444;
-  }
 }
 
 button,
@@ -87,17 +67,17 @@ button,
 
 .button.selected,
 button.selected {
-  border: 2px solid black;
-  box-shadow: 0 0 0 2px lightblue;
+  border: 2px solid var(--color-bg);
+  box-shadow: 0 0 0 2px var(--color-accent);
   pointer-events: none;
-  opacity: 0.9;
+  opacity: 0.7;
 }
 
 .button:hover:not(:disabled),
 .button:active:not(:disabled),
 button:hover:not(:disabled),
 button:active:not(:disabled) {
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 .button:disabled,
@@ -273,7 +253,7 @@ a.button {
 .scroll-control__button {
   background: var(--color-bg);
   color: var(--color-text);
-  border: 1px solid white;
+  border: 1px solid var(--color-text);
   font-size: 90%;
   pointer-events: auto;
   display: flex;
@@ -315,7 +295,7 @@ a.button {
 .modal {
   inset: 0;
   position: fixed;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -325,7 +305,7 @@ a.button {
 .modal__dialog {
   box-shadow: 0px 0px 1px;
   border-radius: var(--space-1);
-  background: black;
+  background: var(--color-bg);
   width: auto;
   min-width: min(500px, 90%);
   max-width: 90%;
@@ -397,14 +377,14 @@ a.button {
   gap: var(--space-3);
   padding: var(--space-2);
   border-radius: var(--space-1);
-  background: #333;
+  background: var(--color-muted);
   cursor: pointer;
 }
 
 .recent-novels__list-item:hover,
 .recent-novels__list-item:active,
 .recent-novels__list-item:focus-visible {
-  background: #555;
+  opacity: 0.9;
 }
 
 .recent-novels__chapter {

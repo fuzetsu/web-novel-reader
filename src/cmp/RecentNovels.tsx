@@ -1,5 +1,6 @@
 import { For, Show } from 'solid-js'
 import { Icon } from './Icon'
+import { theme } from '@/lib/theme'
 
 interface Props {
   recentNovels: string[]
@@ -49,7 +50,7 @@ export function RecentNovels(props: Props) {
                 props.onRemove(novel.id)
               }}
             >
-              <Icon invert name="trash" />
+              <Icon invert={theme() === 'dark'} name="trash" />
             </div>
           </div>
         )}
