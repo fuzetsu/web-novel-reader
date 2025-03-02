@@ -49,7 +49,7 @@ export function TextField<T extends number | undefined>(props: Props<T>) {
   const clearInput = (target: HTMLElement) => {
     const txt = findTextarea(target)
     if (!txt) return
-    txt.value = ''
+    props.onInput('')
     txt.focus()
   }
 
