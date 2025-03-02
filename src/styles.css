@@ -1,5 +1,11 @@
-/* GLOBAL */
+/* RESET */
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* GLOBAL */
 a {
   color: var(--color-accent);
   text-decoration: none;
@@ -20,20 +26,23 @@ html {
   touch-action: manipulation;
 }
 
-* {
-  box-sizing: border-box;
-}
-
 html {
   font-family: sans-serif;
   background: var(--color-bg);
   color: var(--color-text);
   font-size: 18px;
 
-  --space-05: 3px;
-  --space-1: 6px;
-  --space-2: 10px;
-  --space-3: 16px;
+  --border-1: 0.06em;
+  --border-2: 0.1em;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
 
   --color-bg: black;
   --color-text: white;
@@ -67,8 +76,8 @@ button,
 
 .button.selected,
 button.selected {
-  border: 2px solid var(--color-bg);
-  box-shadow: 0 0 0 2px var(--color-accent);
+  border: var(--border-2) solid var(--color-bg);
+  box-shadow: 0 0 0 var(--border-2) var(--color-accent);
   pointer-events: none;
   opacity: 0.7;
 }
@@ -104,7 +113,7 @@ textarea,
   border: none;
   color: var(--color-interactive-text);
   background: var(--color-interactive);
-  border-radius: 4px;
+  border-radius: var(--space-1);
 }
 
 a.button {
@@ -114,7 +123,7 @@ a.button {
 .text-area {
   display: flex;
   flex-direction: column;
-  gap: var(--space-05);
+  gap: var(--space-1);
 }
 
 /* UTIL */
@@ -206,7 +215,7 @@ a.button {
   margin-right: auto;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-3);
 }
 
 .app__home-button {
@@ -257,7 +266,7 @@ a.button {
 .scroll-control__button {
   background: var(--color-bg);
   color: var(--color-text);
-  border: 1px solid var(--color-text);
+  border: var(--border-1) solid var(--color-text);
   font-size: 90%;
   pointer-events: auto;
   display: flex;
@@ -348,6 +357,9 @@ a.button {
 
 .chapter {
   font-size: 120%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 /* CURRENT CHAPTER CONTROL */
