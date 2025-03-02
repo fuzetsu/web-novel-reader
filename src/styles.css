@@ -29,6 +29,7 @@ html {
   background: black;
   color: white;
   font-size: 18px;
+  --space-05: 3px;
   --space-1: 6px;
   --space-2: 10px;
   --space-3: 16px;
@@ -85,6 +86,12 @@ a.button {
   text-decoration: none;
 }
 
+.text-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-05);
+}
+
 /* UTIL */
 
 .button-group {
@@ -135,11 +142,9 @@ a.button {
 
 .form-group {
   padding: var(--space-1);
-}
-
-.form-group > label {
-  display: block;
-  margin-bottom: var(--space-1);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .form-group > input,
@@ -148,13 +153,11 @@ a.button {
 }
 
 .notice {
-  font-size: 75%;
+  font-size: 0.75em;
   color: white;
-  background: #555;
-  border-radius: var(--space-3);
-  padding: var(--space-1);
-  padding-left: var(--space-3);
-  padding-right: var(--space-3);
+  background-color: #555;
+  border-radius: var(--space-2);
+  padding: var(--space-1) var(--space-2);
   display: inline-block;
 }
 
@@ -172,10 +175,9 @@ a.button {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
-}
-
-.app > * {
-  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .app__home-button {
@@ -190,7 +192,6 @@ a.button {
   grid-template-columns: 1fr auto;
   gap: var(--space-1);
   align-items: center;
-  margin-bottom: var(--space-3);
 }
 
 .nav__title {
@@ -317,8 +318,6 @@ a.button {
 /* CHAPTER */
 
 .chapter {
-  padding-top: 0.5rem;
-  margin-bottom: 2rem;
   font-size: 120%;
 }
 
@@ -344,7 +343,6 @@ a.button {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  margin: auto;
 }
 
 .recent-novels__list-item {
