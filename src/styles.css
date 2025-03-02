@@ -1,7 +1,7 @@
 /* GLOBAL */
 
 a {
-  color: lightblue;
+  color: var(--color-accent);
   text-decoration: none;
 }
 
@@ -71,14 +71,14 @@ button:active:not(:disabled) {
 .button:disabled,
 button:disabled,
 input:disabled {
-  background: rgb(151, 151, 151);
-  color: rgb(42, 42, 42);
+  background: var(--color-disabled);
+  color: var(--color-disabled-text);
 }
 
 input.error,
 button.error {
-  background: #a04949;
-  color: white;
+  background: var(--color-error);
+  color: var(--color-text);
 }
 
 button,
@@ -90,8 +90,8 @@ textarea,
   font-size: inherit;
   font-family: inherit;
   border: none;
-  color: black;
-  background: #efefef;
+  color: var(--color-interactive-text);
+  background: var(--color-interactive);
   border-radius: 4px;
 }
 
