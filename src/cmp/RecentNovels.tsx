@@ -19,7 +19,7 @@ export function RecentNovels(props: Props) {
     props.recentNovels.map(id => ({
       id,
       title: idToTitle(id),
-      newestChapter: localStorage[`${id}-cur-chap`] as string | undefined,
+      newestChapter: localStorage.getItem(`${id}-cur-chap`) ?? undefined,
     }))
 
   return (
