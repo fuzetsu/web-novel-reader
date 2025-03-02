@@ -12,7 +12,6 @@ createEffect(() => {
 })
 
 createEffect(() => {
-  if (!theme()) return
   const cls = theme() + '-theme'
   document.documentElement.classList.add(cls)
   onCleanup(() => document.documentElement.classList.remove(cls))

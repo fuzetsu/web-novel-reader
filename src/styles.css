@@ -137,6 +137,10 @@ a.button {
   text-align: center;
 }
 
+.overflow-hidden {
+  overflow: hidden;
+}
+
 .text-small {
   font-size: 80%;
 }

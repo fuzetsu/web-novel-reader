@@ -18,8 +18,13 @@ export function Modal(props: Props) {
       if (e.key === 'Escape') props.onClose()
     }
 
+    const elem = document.scrollingElement
+    elem?.classList.add('overflow-hidden')
     window.addEventListener('keydown', handleKeyDown)
-    onCleanup(() => window.removeEventListener('keydown', handleKeyDown))
+    onCleanup(() => {
+      elem?.classList.remove('overflow-hidden')
+      window.removeEventListener('keydown', handleKeyDown)
+    })
   })
 
   return (
