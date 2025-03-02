@@ -26,9 +26,22 @@ html {
 
 html {
   font-family: sans-serif;
-  background: black;
-  color: white;
+  background: var(--color-bg, black);
+  color: var(--color-text, white);
   font-size: 18px;
+  
+  /* Color Variables */
+  --color-bg: black;
+  --color-text: white;
+  --color-surface: #222;
+  --color-muted: #555;
+  --color-accent: lightblue;
+  --color-interactive: #efefef;
+  --color-interactive-text: black;
+  --color-disabled: rgb(151, 151, 151);
+  --color-disabled-text: rgb(42, 42, 42);
+  --color-error: #a04949;
+
   --space-05: 3px;
   --space-1: 6px;
   --space-2: 10px;
