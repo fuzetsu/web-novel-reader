@@ -26,11 +26,18 @@ html {
 
 html {
   font-family: sans-serif;
-  background: var(--color-bg, black);
-  color: var(--color-text, white);
+  background: var(--color-bg);
+  color: var(--color-text);
   font-size: 18px;
 
-  /* Color Variables */
+  --space-05: 3px;
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 16px;
+}
+
+/* DARK THEME (now explicitly defined) */
+html.dark-theme {
   --color-bg: black;
   --color-text: white;
   --color-surface: #222;
@@ -41,11 +48,36 @@ html {
   --color-disabled: rgb(151, 151, 151);
   --color-disabled-text: rgb(42, 42, 42);
   --color-error: #a04949;
+}
 
-  --space-05: 3px;
-  --space-1: 6px;
-  --space-2: 10px;
-  --space-3: 16px;
+/* LIGHT THEME */
+html.light-theme {
+  --color-bg: white;
+  --color-text: black;
+  --color-surface: #f0f0f0;
+  --color-muted: #aaa;
+  --color-accent: darkblue;
+  --color-interactive: #e0e0e0;
+  --color-interactive-text: black;
+  --color-disabled: rgb(200, 200, 200);
+  --color-disabled-text: rgb(100, 100, 100);
+  --color-error: #ff4444;
+}
+
+/* SYSTEM PREFERENCE THEME */
+@media (prefers-color-scheme: light) {
+  html:not(.dark-theme) {
+    --color-bg: white;
+    --color-text: black;
+    --color-surface: #f0f0f0;
+    --color-muted: #aaa;
+    --color-accent: darkblue;
+    --color-interactive: #e0e0e0;
+    --color-interactive-text: black;
+    --color-disabled: rgb(200, 200, 200);
+    --color-disabled-text: rgb(100, 100, 100);
+    --color-error: #ff4444;
+  }
 }
 
 button,
