@@ -2,10 +2,10 @@ import { autoFocus } from '@/lib/hooks'
 import { Show } from 'solid-js'
 import { JSX } from 'solid-js/jsx-runtime'
 
-interface Props<Rows extends number | undefined> {
+interface Props {
   value: string
   placeholder?: string
-  rows?: Rows
+  rows?: number
   disabled?: boolean
   onInput(value: string): void
   showTextControls?: boolean
@@ -18,7 +18,7 @@ export const DISABLE_AUTO_INPUT_PROPS = {
   autoCorrect: 'off',
 } as const
 
-export function TextField<Rows extends number | undefined>(props: Props<Rows>) {
+export function TextField(props: Props) {
   const inputProps = () =>
     ({
       ...DISABLE_AUTO_INPUT_PROPS,
