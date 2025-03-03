@@ -1,18 +1,20 @@
-import { createSignal, createEffect, onCleanup, untrack } from 'solid-js'
+import { createSignal, createEffect, onCleanup } from 'solid-js'
 import { usePersistedState } from './hooks'
 import { IconName } from '@/cmp/Icon'
 
-type ThemeSetting = 'light' | 'dark' | 'auto'
+const THEMES = ['auto', 'dark', 'light'] as const
 
-const [themeSetting, setThemeSetting] = usePersistedState<ThemeSetting>(
+type Theme = (typeof THEMES)[number]
+
+const [themeSetting, setThemeSetting] = usePersistedState<Theme>(
   () => 'app-theme',
   'auto',
 )
 
 const initialThemeSetting = themeSetting()
-const [activeTheme, setActiveTheme] = createSignal<
-  Exclude<ThemeSetting, 'auto'>
->(initialThemeSetting === 'auto' ? 'dark' : initialThemeSetting)
+const [activeTheme, setActiveTheme] = createSignal<Exclude<Theme, 'auto'>>(
+  initialThemeSetting === 'auto' ? 'dark' : initialThemeSetting,
+)
 
 createEffect(() => {
   const setting = themeSetting()
@@ -46,9 +48,8 @@ export function isDarkTheme() {
 
 export function cycleTheme() {
   setThemeSetting(cur => {
-    if (cur === 'auto')
-      return untrack(activeTheme) === 'light' ? 'dark' : 'light'
-    if (cur === 'dark') return 'light'
-    return 'auto'
+    const curIndex = THEMES.indexOf(cur)
+    const nextIndex = curIndex >= THEMES.length - 1 ? 0 : curIndex + 1
+    return THEMES[nextIndex]
   })
 }
