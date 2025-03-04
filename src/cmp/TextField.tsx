@@ -1,4 +1,4 @@
-import { autoFocus } from '@/lib/hooks'
+import { useAutoFocus } from '@/lib/hooks'
 import { Show } from 'solid-js'
 import { JSX } from 'solid-js/jsx-runtime'
 
@@ -54,7 +54,7 @@ export function TextField(props: Props) {
   }
 
   const setupAutoFocus = (elem: HTMLElement) =>
-    autoFocus(elem, () => props.autoFocus === true)
+    useAutoFocus(elem, () => props.autoFocus === true)
 
   return (
     <Show

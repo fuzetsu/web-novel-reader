@@ -1,6 +1,6 @@
 import { createEffect, JSXElement, onCleanup, Show } from 'solid-js'
 import { Portal } from 'solid-js/web'
-import { trapFocus } from '@/lib/hooks'
+import { useTrapFocus } from '@/lib/hooks'
 
 interface Props {
   open: boolean
@@ -31,7 +31,7 @@ export function Modal(props: Props) {
     <Show when={props.open}>
       <Portal>
         <div
-          ref={elem => trapFocus(elem, () => props.open)}
+          ref={elem => useTrapFocus(elem, () => props.open)}
           class="modal"
           onClick={e => {
             if (e.target.className === 'modal') props.onClose()

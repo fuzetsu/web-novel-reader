@@ -38,11 +38,12 @@ export function usePersistedState<T>(key: Accessor<string>, initialValue: T) {
     try {
       const saved = localStorage.getItem(key())
       return (saved && JSON.parse(saved)) ?? initialValue
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       return initialValue
     }
   })
 
+  // eslint-disable-next-line solid/reactivity -- kept reactive by effect
   const [state, setState] = createSignal(savedValue())
   createEffect(first => {
     const saved = savedValue()
@@ -70,11 +71,11 @@ export function useLocationHash() {
   return hash
 }
 
-export function autoFocus(element: HTMLElement, accessor: () => boolean) {
+export function useAutoFocus(element: HTMLElement, accessor: () => boolean) {
   createEffect(() => accessor() && element.focus())
 }
 
-export function trapFocus(elem: HTMLElement, enabled: () => boolean) {
+export function useTrapFocus(elem: HTMLElement, enabled: () => boolean) {
   const getFocusableElements = () =>
     Array.from(
       elem.querySelectorAll<HTMLElement>(

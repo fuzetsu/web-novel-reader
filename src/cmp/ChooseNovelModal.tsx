@@ -1,7 +1,7 @@
 import { getServerOverride, Server, SERVER_NAMES } from '@/lib/api'
 import { Modal } from './Modal'
 import { TextField } from './TextField'
-import { createMemo, createSignal, Match, Show, Switch } from 'solid-js'
+import { createMemo, createSignal, For, Match, Show, Switch } from 'solid-js'
 
 interface CommonState {
   novelId: string | null
@@ -23,22 +23,23 @@ type State = TextState | ServerState
 
 interface Props {
   currentChapter: number
-  state: State
+  initialState: State
   onChange(nextState: State): void
   onClose(): void
 }
 
 export function ChooseNovelModal(props: Props) {
-  const [novelType, setNovelType] = createSignal(props.state.type)
+  const [novelType, setNovelType] = createSignal(props.initialState.type)
   const [novelId, setNovelId] = createSignal(
-    props.state.novelId?.replace(/-/g, ' ') ?? '',
+    props.initialState.novelId?.replace(/-/g, ' ') ?? '',
   )
-  const [filter, setFilter] = createSignal(props.state.filter ?? '')
+  const [filter, setFilter] = createSignal(props.initialState.filter ?? '')
   const cleanNovelId = () => novelId().toLowerCase().replace(/\s+/g, '-')
 
-  const isNew = () => !props.state.novelId
+  const isNew = () => !props.initialState.novelId
 
-  const serverState = () => (props.state.type === 'server' ? props.state : null)
+  const serverState = () =>
+    props.initialState.type === 'server' ? props.initialState : null
   const [server, setServer] = createSignal(
     serverState()?.server ?? 'novel-full',
   )
@@ -58,7 +59,8 @@ export function ChooseNovelModal(props: Props) {
     (server() !== serverState()?.server ||
       offlineChapters() !== serverState()?.offlineChapters)
 
-  const textState = () => (props.state.type === 'text' ? props.state : null)
+  const textState = () =>
+    props.initialState.type === 'text' ? props.initialState : null
   const [novelText, setNovelText] = createSignal(textState()?.novelText ?? '')
   const textFormDirty = () =>
     novelType() === 'text' && novelText() !== textState()?.novelText
@@ -66,9 +68,9 @@ export function ChooseNovelModal(props: Props) {
   const formDirty = () =>
     serverFormDirty() ||
     textFormDirty() ||
-    novelType() !== props.state.type ||
-    cleanNovelId() !== props.state.novelId ||
-    filter() !== props.state.filter
+    novelType() !== props.initialState.type ||
+    cleanNovelId() !== props.initialState.novelId ||
+    filter() !== props.initialState.filter
 
   const handleChange = () => {
     const common = { novelId: cleanNovelId(), filter: filter() }
@@ -129,9 +131,9 @@ export function ChooseNovelModal(props: Props) {
                   )
                 }}
               >
-                {SERVER_NAMES.map(name => (
-                  <option value={name}>{name}</option>
-                ))}
+                <For each={SERVER_NAMES}>
+                  {name => <option value={name}>{name}</option>}
+                </For>
               </select>
             </Show>
           </div>
@@ -177,8 +179,10 @@ export function ChooseNovelModal(props: Props) {
                   setOfflineChapters(cache => {
                     const copy = { ...cache }
                     offlineData().offlineChapterKeys.forEach(chapter => {
-                      if (Number(chapter) < props.currentChapter)
+                      if (Number(chapter) < props.currentChapter) {
+                        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
                         delete copy[chapter]
+                      }
                     })
                     return copy
                   })
@@ -201,7 +205,7 @@ export function ChooseNovelModal(props: Props) {
       <button disabled={!formDirty() || !novelId()} onClick={handleChange}>
         Save
       </button>
-      <button onClick={props.onClose}>Cancel</button>
+      <button onClick={() => props.onClose()}>Cancel</button>
     </div>
   )
 

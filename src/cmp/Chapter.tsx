@@ -18,7 +18,7 @@ export function Chapter(props: Props) {
             href=""
             onClick={e => {
               e.preventDefault()
-              props.setChapter!()
+              props.setChapter?.()
             }}
           >
             Set chapter

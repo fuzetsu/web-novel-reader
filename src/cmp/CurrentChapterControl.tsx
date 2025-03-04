@@ -1,7 +1,7 @@
 import { classNames } from '@/lib/util'
 import { DISABLE_AUTO_INPUT_PROPS } from './TextField'
 import { Icon } from './Icon'
-import { createSignal } from 'solid-js'
+import { createEffect, createSignal } from 'solid-js'
 
 interface Props {
   chapter: number
@@ -14,17 +14,24 @@ export function CurrentChapterControl(props: Props) {
   const nextChapter = () => props.chapter + props.loadCount
   const previousChapter = () => Math.max(1, props.chapter - props.loadCount)
 
-  const [chapterInput, setChapterInput] = createSignal(String(props.chapter))
-  const [inputError, setInputError] = createSignal(false)
+  const [chapterInput, setChapterInput] = createSignal('')
   const [focused, setFocused] = createSignal(false)
+
+  // keep chapter input and error state in sync with external props.chapter changes
+  createEffect(() => {
+    setChapterInput(String(props.chapter))
+  })
+
+  const hasInputError = () => {
+    const userInput = Number(chapterInput())
+    return isNaN(userInput) || userInput < 1
+  }
 
   const disableNext = () =>
     Boolean(props.maxChapter && nextChapter() > props.maxChapter)
 
-  const handleChapterChange = (newChapter: number) => {
+  const handleChapterChange = (newChapter: number) =>
     props.onChange(newChapter, props.loadCount)
-    setChapterInput(String(newChapter))
-  }
 
   return (
     <div class="current-chapter-control">
@@ -42,27 +49,22 @@ export function CurrentChapterControl(props: Props) {
       </button>
       <input
         {...DISABLE_AUTO_INPUT_PROPS}
+        inputMode="numeric"
         class={classNames(
           'current-chapter-control__input',
-          inputError() && 'error',
+          hasInputError() && 'error',
         )}
         value={
           focused() || props.loadCount === 1
             ? chapterInput()
             : `${props.chapter}-${props.chapter + (props.loadCount - 1)}`
         }
-        onFocus={() => {
-          if (!inputError()) setChapterInput(String(props.chapter))
-          setFocused(true)
-        }}
+        onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         onChange={e => {
           const value = e.currentTarget.value
           setChapterInput(value)
-          const userInput = Number(value)
-          const error = isNaN(userInput) || userInput < 1
-          setInputError(error)
-          if (!error) handleChapterChange(userInput)
+          if (!hasInputError()) handleChapterChange(Number(value))
         }}
       />
       <button

@@ -15,7 +15,13 @@ import {
   scrollToTop,
   splitNovelText,
 } from '@/lib/util'
-import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
+import {
+  createEffect,
+  createMemo,
+  createSignal,
+  onCleanup,
+  untrack,
+} from 'solid-js'
 
 type NovelType = 'server' | 'text'
 
@@ -213,9 +219,9 @@ export function useNovelState() {
 
   const saveCurrentChapters = () => {
     setOfflineChapters(cur =>
-      chapters().reduce(
+      untrack(chapters).reduce(
         (acc, chapter, index) => {
-          acc[currentChapter() + index] = chapter
+          acc[untrack(currentChapter) + index] = chapter
           return acc
         },
         { ...cur },
