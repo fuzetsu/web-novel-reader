@@ -9,7 +9,8 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "lint": "eslint . && tsc --noEmit"
   },
   "browserslist": [
     "defaults"
