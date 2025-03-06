@@ -1,1 +1,1 @@
-export * from './useNovelState'
+export * from './createNovelState'

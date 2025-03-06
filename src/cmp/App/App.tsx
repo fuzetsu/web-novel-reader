@@ -4,7 +4,7 @@ import { usePreventDefault, repeat, scrollToTop } from '@/lib/util'
 import { Chapter } from '../Chapter'
 import { CurrentChapterControl } from '../CurrentChapterControl'
 import { ScrollControl } from '../ScrollControl'
-import { useNovelState } from './hooks'
+import { createNovelState } from './hooks'
 import { Nav } from '@/cmp/Nav'
 import { Icon } from '@/cmp/Icon'
 import { batch, createSignal, Index, Show } from 'solid-js'
@@ -39,7 +39,7 @@ export function App() {
     setNovelText,
     setNovelType,
     setServer,
-  } = useNovelState()
+  } = createNovelState()
 
   const resumeNewestChapter = usePreventDefault(() =>
     setCurrentChapter(newestChapter()),

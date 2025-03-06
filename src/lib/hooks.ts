@@ -33,7 +33,10 @@ export function useTimeout(delay: number, fn: () => void) {
   })
 }
 
-export function usePersistedState<T>(key: Accessor<string>, initialValue: T) {
+export function createPersistedState<T>(
+  key: Accessor<string>,
+  initialValue: T,
+) {
   const savedValue = createMemo<T>(() => {
     try {
       const saved = localStorage.getItem(key())

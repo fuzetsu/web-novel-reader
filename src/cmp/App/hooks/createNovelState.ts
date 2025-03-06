@@ -1,7 +1,7 @@
 import { fetchChapter, getMaxChapter, Server } from '@/lib/api'
 import {
   useLocationHash,
-  usePersistedState,
+  createPersistedState,
   useThrottledScroll,
 } from '@/lib/hooks'
 import {
@@ -36,7 +36,7 @@ const shouldCheck = (lastCheck: number) => lastCheck < Date.now() - SIX_HOURS
 
 const CACHE_KEY = 'chapter-cache'
 
-export function useNovelState() {
+export function createNovelState() {
   const hash = useLocationHash()
 
   // extract novel/chapter from url hash with format "#/novelId/chapter"
@@ -52,25 +52,25 @@ export function useNovelState() {
     () =>
       `${prefix ?? novelId()}-${key}`
 
-  const [offlineChapters, setOfflineChapters] = usePersistedState<{
+  const [offlineChapters, setOfflineChapters] = createPersistedState<{
     [chapter: string]: string[]
   }>(novelKey(CACHE_KEY), {})
 
-  const [novelType, setNovelType] = usePersistedState<NovelType>(
+  const [novelType, setNovelType] = createPersistedState<NovelType>(
     novelKey('type'),
     'server',
   )
 
-  const [filter, setFilter] = usePersistedState(novelKey('filter'), '')
+  const [filter, setFilter] = createPersistedState(novelKey('filter'), '')
 
-  const [novelText, setNovelText] = usePersistedState(novelKey('text'), '')
+  const [novelText, setNovelText] = createPersistedState(novelKey('text'), '')
   const novelTextChapters = createMemo(() =>
     splitNovelText(novelText()).map(chapter =>
       applyTextFilter(chapter, filter()),
     ),
   )
 
-  const [storedMaxChapter, setMaxChapter] = usePersistedState<MaxChapter>(
+  const [storedMaxChapter, setMaxChapter] = createPersistedState<MaxChapter>(
     novelKey('max-chap'),
     null,
   )
@@ -101,7 +101,7 @@ export function useNovelState() {
     })
   })
 
-  const [newestChapter, setNewestChapter] = usePersistedState(
+  const [newestChapter, setNewestChapter] = createPersistedState(
     novelKey('cur-chap'),
     1,
   )
@@ -111,7 +111,7 @@ export function useNovelState() {
     }
   })
 
-  const [server, setServer] = usePersistedState<Server>(
+  const [server, setServer] = createPersistedState<Server>(
     novelKey('server'),
     'novel-full',
   )
@@ -127,7 +127,10 @@ export function useNovelState() {
       .join(' '),
   )
 
-  const [loadCount, setLoadCount] = usePersistedState(novelKey('load-count'), 1)
+  const [loadCount, setLoadCount] = createPersistedState(
+    novelKey('load-count'),
+    1,
+  )
 
   const fetchChapterWithCache = (chapter: number) => {
     const id = novelId()
@@ -169,7 +172,7 @@ export function useNovelState() {
   )
 
   // restore scroll position when chapters load
-  const [lastPos, setLastPos] = usePersistedState<string | null>(
+  const [lastPos, setLastPos] = createPersistedState<string | null>(
     novelKey('last-pos'),
     null,
   )
@@ -194,7 +197,7 @@ export function useNovelState() {
     }
   })
 
-  const [recentNovels, setRecentNovels] = usePersistedState<string[]>(
+  const [recentNovels, setRecentNovels] = createPersistedState<string[]>(
     () => 'recent-novels',
     [],
   )

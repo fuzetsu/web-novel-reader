@@ -1,12 +1,12 @@
 import { createSignal, createEffect, onCleanup } from 'solid-js'
-import { usePersistedState } from './hooks'
+import { createPersistedState } from './hooks'
 import { IconName } from '@/cmp/Icon'
 
 const THEMES = ['auto', 'dark', 'light'] as const
 
 type Theme = (typeof THEMES)[number]
 
-const [themeSetting, setThemeSetting] = usePersistedState<Theme>(
+const [themeSetting, setThemeSetting] = createPersistedState<Theme>(
   () => 'app-theme',
   'auto',
 )
