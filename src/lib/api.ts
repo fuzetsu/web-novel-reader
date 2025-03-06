@@ -69,12 +69,24 @@ const getServerConf = (defaultServer: Server, novelId: string) => {
 
 const chapterCache = new Map<string, string[]>()
 
+export const getCacheKey = (
+  server: Server,
+  novelId: string,
+  chapter: number,
+): string => server + novelId + chapter
+
+export const chapterInCache = (
+  server: Server,
+  novelId: string,
+  chapter: number,
+): boolean => chapterCache.has(getCacheKey(server, novelId, chapter))
+
 export const fetchChapter = async (
   defaultServer: Server,
   novelId: string,
   chapter: number,
 ) => {
-  const cacheKey = defaultServer + novelId + chapter
+  const cacheKey = getCacheKey(defaultServer, novelId, chapter)
   const cachedChapter = chapterCache.get(cacheKey)
   if (cachedChapter) return cachedChapter
   const conf = getServerConf(defaultServer, novelId)

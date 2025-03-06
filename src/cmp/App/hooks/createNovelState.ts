@@ -1,4 +1,4 @@
-import { fetchChapter, getMaxChapter, Server } from '@/lib/api'
+import { chapterInCache, fetchChapter, getMaxChapter, Server } from '@/lib/api'
 import {
   useLocationHash,
   createPersistedState,
@@ -146,7 +146,8 @@ export function createNovelState() {
   createEffect(() => {
     scrollToTop()
     setChapters([])
-    if (!novelId()) return
+    const id = novelId()
+    if (!id) return
     if (novelType() === 'text') {
       setChapters(novelTextChapters().slice(currentChapter() - 1))
       return
@@ -155,15 +156,23 @@ export function createNovelState() {
     const count = loadCount()
     const curChap = currentChapter()
 
-    onCleanup(
-      delayWithCancel(500, () =>
-        promiseWithCancel(
-          Promise.all(
-            repeat(count, index => fetchChapterWithCache(index + curChap)),
-          ),
-          setChapters,
+    const allCached = repeat(count, index => {
+      const chap = index + curChap
+      return chapterInCache(server(), id, chap) || offlineChapters()[chap]
+    }).every(Boolean)
+
+    const getChaptersWithCancel = () =>
+      promiseWithCancel(
+        Promise.all(
+          repeat(count, index => fetchChapterWithCache(index + curChap)),
         ),
-      ),
+        setChapters,
+      )
+
+    onCleanup(
+      allCached
+        ? getChaptersWithCancel()
+        : delayWithCancel(500, getChaptersWithCancel),
     )
   })
 
