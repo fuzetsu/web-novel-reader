@@ -195,6 +195,7 @@ export function createNovelState() {
 
   // track scroll position
   useThrottledScroll(800, () => {
+    if (!novelId()) return
     const pos = qq<HTMLElement>('[data-pos]').find(
       pos => pos.getBoundingClientRect().bottom > 0,
     )?.dataset.pos
