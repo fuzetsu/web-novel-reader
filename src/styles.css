@@ -22,7 +22,6 @@ body,
 html {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
   touch-action: manipulation;
 }
 
@@ -226,14 +225,35 @@ a.button {
 /** NAV **/
 
 .nav {
+  top: 1em;
+  background: var(--color-bg);
   display: grid;
   grid-template-columns: 1fr auto;
   gap: var(--space-1);
   align-items: center;
+  padding: var(--space-2);
+}
+
+.nav--sticky {
+  position: sticky;
+  top: -150px;
+  left: 0;
+  right: 0;
+  transition: top 300ms;
+  border-radius: var(--space-2);
+}
+
+.nav--sticky-visible {
+  top: var(--space-4);
+  border: var(--border-1) solid var(--color-text);
 }
 
 .nav__title {
   font-size: 120%;
+}
+
+.nav__subtitle {
+  color: var(--color-accent);
 }
 
 .nav__actions {
