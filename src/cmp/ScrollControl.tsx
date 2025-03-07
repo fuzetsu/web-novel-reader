@@ -1,15 +1,9 @@
 import { isDarkTheme } from '@/lib/theme'
 import { useThrottledScroll } from '../lib/hooks'
-import {
-  classNames,
-  notEmpty,
-  qq,
-  scrollToBottom,
-  scrollToTop,
-  throttledFn,
-} from '../lib/util'
+import { classNames, notEmpty, throttledFn } from '../lib/util'
 import { Icon } from './Icon'
 import { createSignal, For, JSX, Show } from 'solid-js'
+import { getCurrentChapter, scrollToNextChapter } from '@/lib/chapter'
 
 type Action = { label: JSX.Element } & (
   | { url: string }
@@ -17,17 +11,6 @@ type Action = { label: JSX.Element } & (
 )
 
 const defaultActions: Action[] = [{ label: 'Home', url: '/' }]
-
-const getCurrentChapter = () => {
-  const chapters = qq<HTMLDivElement>('[data-chapter]')
-  const currentChapter =
-    chapters.find(chapter => {
-      const chapterTop = chapter.offsetTop
-      const chapterBottom = chapterTop + chapter.offsetHeight
-      return window.scrollY >= chapterTop && window.scrollY < chapterBottom
-    }) ?? chapters.at(0)
-  return currentChapter?.dataset.chapter
-}
 
 interface Props {
   moreActions?: (Action | null)[]
@@ -59,25 +42,6 @@ export function ScrollControl(props: Props) {
     }
     updateCurrentChapter()
   })
-
-  const scrollToNextChapter = () => {
-    const chapters = qq('[data-chapter]')
-    if (scrollingDown()) {
-      const nextChapter = chapters.find(
-        chapter =>
-          chapter.getBoundingClientRect().top - window.innerHeight > -10,
-      )
-      if (nextChapter) nextChapter.scrollIntoView()
-      else scrollToBottom()
-    } else {
-      const nextIndex = chapters
-        .reverse()
-        .findIndex(chapter => chapter.getBoundingClientRect().top < -10)
-      const nextChapter = chapters.at(nextIndex)
-      if (!nextChapter || nextIndex + 1 - chapters.length === 0) scrollToTop()
-      else nextChapter.scrollIntoView()
-    }
-  }
 
   const actions = () => [
     ...(props.moreActions ?? []).filter(notEmpty),
@@ -124,7 +88,10 @@ export function ScrollControl(props: Props) {
       >
         {'\u2303'}
       </button>
-      <button class="scroll-control__button" onClick={scrollToNextChapter}>
+      <button
+        class="scroll-control__button"
+        onClick={() => scrollToNextChapter(scrollingDown() ? 'down' : 'up')}
+      >
         <Icon
           invert={isDarkTheme()}
           name={scrollingDown() ? 'arrowDown' : 'arrowUp'}
