@@ -37,7 +37,6 @@ export function Nav(props: Props) {
   return (
     <nav
       aria-hidden
-      class="nav"
       classList={{
         nav: true,
         'nav--sticky': sticky(),
@@ -46,7 +45,7 @@ export function Nav(props: Props) {
     >
       <span class="nav__title">
         {props.title}{' '}
-        {sticky() && (
+        {sticky() && scrolledChapter() && (
           <span class="nav__subtitle">Chapter {scrolledChapter()}</span>
         )}
       </span>

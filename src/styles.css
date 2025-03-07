@@ -239,8 +239,17 @@ a.button {
   top: -150px;
   left: 0;
   right: 0;
-  transition: top 300ms;
+  transition:
+    top 300ms,
+    opacity 300ms;
   border-radius: var(--space-2);
+  opacity: 0.8;
+}
+
+.nav--sticky:hover,
+.nav--sticky:focus-within,
+.nav--sticky:active {
+  opacity: 1;
 }
 
 .nav--sticky-visible {
