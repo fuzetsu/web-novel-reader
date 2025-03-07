@@ -253,6 +253,7 @@ a.button {
 }
 
 .nav__subtitle {
+  white-space: nowrap;
   color: var(--color-accent);
 }
 
