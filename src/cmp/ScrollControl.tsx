@@ -120,7 +120,7 @@ export function ScrollControl(props: Props) {
           'scroll-control__show-extra',
           showExtra() && 'scroll-control__show-extra--upside-down',
         )}
-        onClick={() => setShowExtra(!showExtra())}
+        onClick={() => setShowExtra(x => !x)}
       >
         {'\u2303'}
       </button>

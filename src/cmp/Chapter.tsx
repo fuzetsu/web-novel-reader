@@ -1,3 +1,4 @@
+import { usePreventDefault } from '@/lib/util'
 import { Index, Show } from 'solid-js'
 
 interface Props {
@@ -7,6 +8,8 @@ interface Props {
 }
 
 export function Chapter(props: Props) {
+  const setChapter = usePreventDefault(() => props.setChapter?.())
+
   return (
     <div class="chapter" data-chapter={props.chapter}>
       <p data-pos={`${props.chapter}-0`}>
@@ -16,10 +19,7 @@ export function Chapter(props: Props) {
             aria-hidden
             class="text-small no-wrap"
             href=""
-            onClick={e => {
-              e.preventDefault()
-              props.setChapter?.()
-            }}
+            onClick={setChapter}
           >
             Set chapter
           </a>

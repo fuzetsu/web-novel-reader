@@ -219,9 +219,8 @@ export function App() {
                       onClick: async e => {
                         const content = chapters()
                           .map(
-                            (chapter, index) =>
-                              `Chapter ${currentChapter() + index}:\n\n` +
-                              chapter.join('\n\n'),
+                            (lines, index) =>
+                              `Chapter ${currentChapter() + index}:\n\n${lines.join('\n\n')}`,
                           )
                           .join('\n\n')
                         const btn = e.currentTarget
