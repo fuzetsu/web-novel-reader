@@ -7,21 +7,27 @@ interface Props extends ParentProps {
 }
 
 export function Nav(props: Props) {
-  const [sticky, setSticky] = createSignal(window.scrollY > 0)
+  const shouldFloat = () => window.scrollY > 100
+
+  const [floating, setFloating] = createSignal(false)
   const [visible, setVisible] = createSignal(false)
-  const [scrolledChapter, setScrolledChapter] = createSignal<number | null>(
-    null,
-  )
-  useScroll(() => setSticky(window.scrollY > 0))
+
+  const [scrolledChapter, setScrolledChapter] =
+    createSignal(getCurrentChapter())
+
+  useScroll(() => {
+    setFloating(shouldFloat())
+    if (!floating()) setVisible(false)
+  })
   useThrottledScroll(500, () => {
-    if (!sticky() || !visible()) return
-    const chap = Number(getCurrentChapter())
-    if (!isNaN(chap)) setScrolledChapter(chap)
+    if (visible() && floating())
+      setScrolledChapter(x => getCurrentChapter() ?? x)
   })
 
   createEffect(() => {
     let lastClick = 0
     const handler = (e: MouseEvent) => {
+      if (!shouldFloat()) return
       if ((e.target as Element).closest('button')) return
       const now = Date.now()
       if (now - lastClick < 400) {
@@ -37,15 +43,15 @@ export function Nav(props: Props) {
   return (
     <nav
       aria-hidden
+      class="nav"
       classList={{
-        nav: true,
-        'nav--sticky': sticky(),
-        'nav--sticky-visible': sticky() && visible(),
+        'nav--floating': floating(),
+        'nav--floating-visible': floating() && visible(),
       }}
     >
       <span class="nav__title">
         {props.title}{' '}
-        {sticky() && scrolledChapter() && (
+        {visible() && floating() && scrolledChapter() && (
           <span class="nav__subtitle">Chapter {scrolledChapter()}</span>
         )}
       </span>

@@ -2,12 +2,11 @@ import { qq, scrollToBottom, scrollToTop } from './util'
 
 export const getCurrentChapter = () => {
   const chapters = qq<HTMLDivElement>('[data-chapter]')
-  const currentChapter =
-    chapters.find(chapter => {
-      const chapterTop = chapter.offsetTop
-      const chapterBottom = chapterTop + chapter.offsetHeight
-      return window.scrollY >= chapterTop && window.scrollY < chapterBottom
-    }) ?? chapters.at(0)
+  const currentChapter = chapters.find(chapter => {
+    const chapterTop = chapter.offsetTop
+    const chapterBottom = chapterTop + chapter.offsetHeight
+    return window.scrollY >= chapterTop && window.scrollY < chapterBottom
+  })
   return currentChapter?.dataset.chapter
 }
 

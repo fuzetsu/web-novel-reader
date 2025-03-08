@@ -25,7 +25,7 @@ export function ScrollControl(props: Props) {
   const [showExtra, setShowExtra] = createSignal(false)
 
   const updateCurrentChapter = throttledFn(500, () =>
-    setCurrentChapter(getCurrentChapter()),
+    setCurrentChapter(x => getCurrentChapter() ?? x),
   )
 
   let lastScroll: number

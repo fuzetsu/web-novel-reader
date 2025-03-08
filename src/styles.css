@@ -225,7 +225,6 @@ a.button {
 /** NAV **/
 
 .nav {
-  top: 1em;
   background: var(--color-bg);
   display: grid;
   grid-template-columns: 1fr auto;
@@ -234,7 +233,7 @@ a.button {
   padding: var(--space-2);
 }
 
-.nav--sticky {
+.nav--floating {
   position: sticky;
   top: -150px;
   left: 0;
@@ -246,13 +245,13 @@ a.button {
   opacity: 0.8;
 }
 
-.nav--sticky:hover,
-.nav--sticky:focus-within,
-.nav--sticky:active {
+.nav--floating:hover,
+.nav--floating:focus-within,
+.nav--floating:active {
   opacity: 1;
 }
 
-.nav--sticky-visible {
+.nav--floating-visible {
   top: var(--space-4);
   border: var(--border-1) solid var(--color-text);
 }
