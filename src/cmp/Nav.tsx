@@ -33,8 +33,8 @@ export function Nav(props: Props) {
       if (now - lastClick < 400) {
         e.preventDefault()
         setVisible(x => !x)
-      }
-      lastClick = now
+        lastClick = 0
+      } else lastClick = now
     }
     window.addEventListener('click', handler)
     onCleanup(() => window.removeEventListener('click', handler))
