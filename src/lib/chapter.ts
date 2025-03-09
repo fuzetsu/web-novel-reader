@@ -27,3 +27,19 @@ export const scrollToNextChapter = (dir: 'up' | 'down') => {
     else nextChapter.scrollIntoView()
   }
 }
+
+export function splitNovelText(novelText: string): string[][] {
+  const allLines = novelText.split('\n')
+  let chapterLines: string[] = []
+  const chapters = [chapterLines]
+  for (const line of allLines) {
+    const trimmedLine = line.trim()
+    if (!trimmedLine) continue
+    if (/^chapter [0-9]+/i.test(trimmedLine)) {
+      chapterLines = []
+      chapters.push(chapterLines)
+    }
+    chapterLines.push(trimmedLine)
+  }
+  return chapters.filter(lines => lines.length > 0)
+}

@@ -1,4 +1,5 @@
 import { chapterInCache, fetchChapter, getMaxChapter, Server } from '@/lib/api'
+import { splitNovelText } from '@/lib/chapter'
 import {
   useLocationHash,
   createPersistedState,
@@ -13,7 +14,6 @@ import {
   qq,
   repeat,
   scrollToTop,
-  splitNovelText,
 } from '@/lib/util'
 import {
   createEffect,
@@ -64,11 +64,7 @@ export function createNovelState() {
   const [filter, setFilter] = createPersistedState(novelKey('filter'), '')
 
   const [novelText, setNovelText] = createPersistedState(novelKey('text'), '')
-  const novelTextChapters = createMemo(() =>
-    splitNovelText(novelText()).map(chapter =>
-      applyTextFilter(chapter, filter()),
-    ),
-  )
+  const novelTextChapters = createMemo(() => splitNovelText(novelText()))
 
   const [storedMaxChapter, setMaxChapter] = createPersistedState<MaxChapter>(
     novelKey('max-chap'),
@@ -249,7 +245,7 @@ export function createNovelState() {
     setOfflineChapters(cur =>
       chapters.reduce(
         (acc, chapter, index) => {
-          acc[currentChapter() + index] = applyTextFilter(chapter, filter())
+          acc[currentChapter() + index] = chapter
           return acc
         },
         { ...cur },
