@@ -43,7 +43,7 @@ const SERVER_CONF = {
   },
   freewebnovel: {
     url: 'https://freewebnovel.com/:novelId/chapter-:chapter.html',
-    sel: '#article p',
+    sel: '.m-read p:not(.tips)',
     maxChap: {
       url: 'https://freewebnovel.com/:novelId.html',
       sel: '.m-newest1 li a',
