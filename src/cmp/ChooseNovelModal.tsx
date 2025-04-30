@@ -36,6 +36,11 @@ export function ChooseNovelModal(props: Props) {
   const [filter, setFilter] = createSignal(props.initialState.filter ?? '')
   const cleanNovelId = () => novelId().toLowerCase().replace(/\s+/g, '-')
 
+  const commonFormDirty = () =>
+    novelType() !== props.initialState.type ||
+    cleanNovelId() !== props.initialState.novelId ||
+    filter() !== props.initialState.filter
+
   const isNew = () => !props.initialState.novelId
 
   const serverState = () =>
@@ -66,11 +71,7 @@ export function ChooseNovelModal(props: Props) {
     novelType() === 'text' && novelText() !== textState()?.novelText
 
   const formDirty = () =>
-    serverFormDirty() ||
-    textFormDirty() ||
-    novelType() !== props.initialState.type ||
-    cleanNovelId() !== props.initialState.novelId ||
-    filter() !== props.initialState.filter
+    commonFormDirty() || serverFormDirty() || textFormDirty()
 
   const handleChange = () => {
     const common = { novelId: cleanNovelId(), filter: filter() }
