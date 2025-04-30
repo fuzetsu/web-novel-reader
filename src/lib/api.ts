@@ -10,10 +10,12 @@ const fetchDoc = (url: string) =>
     .then(res => (res.ok ? res.text() : Promise.reject()))
     .then(html => new DOMParser().parseFromString(html, 'text/html'))
 
+type Selector<T> = string | ((doc: Document) => T | null)
+
 interface TypeDef {
   url: string
-  sel: string
-  maxChap: { url: string; sel: string | ((doc: Document) => string | null) }
+  sel: Selector<string[]>
+  maxChap: { url: string; sel: Selector<string> }
 }
 
 const SERVER_CONF = {
@@ -38,7 +40,7 @@ const SERVER_CONF = {
     sel: '#chapterText',
     maxChap: {
       url: 'https://www.wuxiaworld.eu/novel/:novelId',
-      sel: (doc: Document) => qq('.mantine-Text-root', doc)[7]?.textContent,
+      sel: doc => qq('.mantine-Text-root', doc)[7]?.textContent,
     },
   },
   freewebnovel: {
