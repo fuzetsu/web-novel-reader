@@ -215,6 +215,36 @@ export function App() {
               moreActions={[
                 chapters().length > 0
                   ? {
+                      label: 'Download epub',
+                      onClick: async () => {
+                        const bookData = {
+                          title: novelName(),
+                          author: 'web-novel-reader',
+                          language: 'en',
+                          chapters: chapters().map((lines, index) => ({
+                            title: `Chapter ${currentChapter() + index}`,
+                            content: lines.join('\n\n'),
+                          })),
+                        }
+
+                        const response = await fetch(
+                          'https://json-to-epub.fuz.workers.dev/',
+                          {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(bookData),
+                          },
+                        )
+                        const url = URL.createObjectURL(await response.blob())
+                        const a = document.createElement('a')
+                        a.href = url
+                        a.download = `${novelId()}-chapter-${currentChapter()}${loadCount() > 1 ? '-' + (currentChapter() + loadCount() - 1) : ''}.epub`
+                        a.click()
+                      },
+                    }
+                  : null,
+                chapters().length > 0
+                  ? {
                       label: 'Copy',
                       onClick: async e => {
                         const content = chapters()
