@@ -121,3 +121,20 @@ export function throttledFn<T extends (...args: never[]) => void>(
     )
   }
 }
+
+export function isMobileSafari() {
+  const userAgent = navigator.userAgent
+
+  return (
+    // Check for iOS device (iPhone, iPad, iPod)
+    /(iPhone|iPad|iPod)/.test(userAgent) &&
+    // Check for AppleWebKit engine (Safari uses this)
+    /WebKit/.test(userAgent) &&
+    // Exclude Chrome on iOS (which uses CriOS in its user agent)
+    !/CriOS/.test(userAgent) &&
+    // Exclude Firefox on iOS (which uses FxiOS in its user agent)
+    !/FxiOS/.test(userAgent) &&
+    // Ensure it explicitly says Safari
+    /Safari/.test(userAgent)
+  )
+}

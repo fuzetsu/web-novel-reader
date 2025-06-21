@@ -1,6 +1,11 @@
 import { ChooseNovelModal } from '@/cmp/ChooseNovelModal'
 import { RecentNovels } from '@/cmp/RecentNovels'
-import { usePreventDefault, repeat, scrollToTop } from '@/lib/util'
+import {
+  usePreventDefault,
+  repeat,
+  scrollToTop,
+  isMobileSafari,
+} from '@/lib/util'
 import { Chapter } from '../Chapter'
 import { CurrentChapterControl } from '../CurrentChapterControl'
 import { ScrollControl } from '../ScrollControl'
@@ -238,8 +243,10 @@ export function App() {
                         const url = URL.createObjectURL(await response.blob())
                         const a = document.createElement('a')
                         a.href = url
-                        a.download = `${novelId()}-chapter-${currentChapter()}${loadCount() > 1 ? '-' + (currentChapter() + loadCount() - 1) : ''}.epub`
+                        const extension = isMobileSafari() ? 'txt' : 'epub'
+                        a.download = `${novelId()}-chapter-${currentChapter()}${loadCount() > 1 ? '-' + (currentChapter() + loadCount() - 1) : ''}.${extension}`
                         a.click()
+                        URL.revokeObjectURL(url)
                       },
                     }
                   : null,
