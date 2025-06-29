@@ -243,8 +243,14 @@ export function App() {
                   ? {
                       label: 'Download epub',
                       onClick: async () => {
+                        const chapterRange =
+                          loadCount() > 1
+                            ? currentChapter() +
+                              '-' +
+                              (currentChapter() + loadCount() - 1)
+                            : currentChapter()
                         const bookData = {
-                          title: `${novelName()} Chapter ${currentChapter()}-${currentChapter() + (loadCount() - 1)}`,
+                          title: `${novelName()} Chapter ${chapterRange}`,
                           author: 'web-novel-reader',
                           language: 'en',
                           chapters: chapters().map((lines, index) => ({
@@ -265,7 +271,7 @@ export function App() {
                         const a = document.createElement('a')
                         a.href = url
                         const extension = isMobileSafari() ? 'txt' : 'epub'
-                        a.download = `${novelId()}-chapter-${currentChapter()}${loadCount() > 1 ? '-' + (currentChapter() + loadCount() - 1) : ''}.${extension}`
+                        a.download = `${novelId()}-chapter-${chapterRange}.${extension}`
                         a.click()
                         URL.revokeObjectURL(url)
                       },
