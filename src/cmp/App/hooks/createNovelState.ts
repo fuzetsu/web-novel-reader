@@ -57,7 +57,7 @@ export function createNovelState() {
       `${prefix ?? novelId()}-${key}`
 
   const [offlineChapters, setOfflineChapters] = createPersistedState<{
-    [chapter: string]: string[]
+    [chapter: string]: string[] | undefined
   }>(novelKey(CACHE_KEY), {})
 
   const [novelType, setNovelType] = createPersistedState<NovelType>(
@@ -260,6 +260,31 @@ export function createNovelState() {
     )
   }
 
+  const retryChapter = (chapter: number) => {
+    const id = novelId()
+    if (!id) return
+
+    if (untrack(offlineChapters)[chapter]) {
+      setOfflineChapters(cur => ({ ...cur, [chapter]: undefined }))
+    }
+
+    const currentChaps = untrack(chapters)
+    const chapterIndex = chapter - untrack(currentChapter)
+    if (chapterIndex >= 0 && chapterIndex < currentChaps.length) {
+      const replaceChapter = (lines: string[]) =>
+        setChapters(prev => {
+          const updated = [...prev]
+          updated[chapterIndex] = lines
+          return updated
+        })
+      replaceChapter(['Retrying...'])
+
+      fetchChapter(server(), id, chapter)
+        .then(replaceChapter)
+        .catch(() => replaceChapter([FETCH_ERROR]))
+    }
+  }
+
   return {
     chapters: filteredChapters,
     checkMaxChapter,
@@ -274,6 +299,7 @@ export function createNovelState() {
     novelType,
     recentNovels,
     removeRecent,
+    retryChapter,
     server,
     offlineChapters,
     someCurrentChaptersUnsaved,

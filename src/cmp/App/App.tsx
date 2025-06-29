@@ -30,6 +30,7 @@ export function App() {
     novelType,
     recentNovels,
     removeRecent,
+    retryChapter,
     server,
     someCurrentChaptersUnsaved,
     offlineChapters,
@@ -205,6 +206,7 @@ export function App() {
                     chapter={chapter()}
                     setChapter={setChapter}
                     lines={chapters()[index]}
+                    onRetry={() => retryChapter(chapter())}
                   />
                 )
               }}

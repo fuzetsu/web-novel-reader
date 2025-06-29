@@ -16,7 +16,7 @@ interface TextState extends CommonState {
 interface ServerState extends CommonState {
   type: 'server'
   server: Server
-  offlineChapters: { [chapter: string]: string[] }
+  offlineChapters: { [chapter: string]: string[] | undefined }
 }
 
 type State = TextState | ServerState
