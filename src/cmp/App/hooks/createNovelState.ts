@@ -36,6 +36,10 @@ const shouldCheck = (lastCheck: number) => lastCheck < Date.now() - SIX_HOURS
 
 const CACHE_KEY = 'chapter-cache'
 
+const FETCH_ERROR = 'Error fetching chapter.'
+export const isErrorChapter = (chapter: string[]) =>
+  chapter.length === 1 && chapter[0] === FETCH_ERROR
+
 export function createNovelState() {
   const hash = useLocationHash()
 
@@ -133,9 +137,7 @@ export function createNovelState() {
     if (!id) return []
     const savedChapter = offlineChapters()[chapter]
     if (savedChapter) return savedChapter
-    return fetchChapter(server(), id, chapter).catch(() => [
-      'Error fetching chapter.',
-    ])
+    return fetchChapter(server(), id, chapter).catch(() => [FETCH_ERROR])
   }
 
   const [chapters, setChapters] = createSignal<string[][]>([])
@@ -230,7 +232,9 @@ export function createNovelState() {
     setOfflineChapters(cur =>
       untrack(chapters).reduce(
         (acc, chapter, index) => {
-          acc[untrack(currentChapter) + index] = chapter
+          if (!isErrorChapter(chapter)) {
+            acc[untrack(currentChapter) + index] = chapter
+          }
           return acc
         },
         { ...cur },
@@ -239,13 +243,16 @@ export function createNovelState() {
   }
 
   const saveNextChapters = async (amount: number) => {
+    const curChap = untrack(currentChapter)
     const chapters = await Promise.all(
-      repeat(amount, index => fetchChapterWithCache(currentChapter() + index)),
+      repeat(amount, index => fetchChapterWithCache(curChap + index)),
     )
     setOfflineChapters(cur =>
       chapters.reduce(
         (acc, chapter, index) => {
-          acc[currentChapter() + index] = chapter
+          if (!isErrorChapter(chapter)) {
+            acc[curChap + index] = chapter
+          }
           return acc
         },
         { ...cur },
