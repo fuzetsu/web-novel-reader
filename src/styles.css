@@ -198,6 +198,16 @@ a.button {
   display: inline-block;
 }
 
+.notice-warning {
+  font-size: 0.75em;
+  color: var(--color-text);
+  background-color: var(--color-muted);
+  border-radius: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  display: inline-block;
+  border-left: var(--space-1) solid var(--color-error);
+}
+
 .icon {
   height: 22px;
   width: 22px;

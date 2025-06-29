@@ -9,7 +9,7 @@ import {
 import { Chapter } from '../Chapter'
 import { CurrentChapterControl } from '../CurrentChapterControl'
 import { ScrollControl } from '../ScrollControl'
-import { createNovelState } from './hooks'
+import { createNovelState, isErrorChapter } from './hooks'
 import { Nav } from '@/cmp/Nav'
 import { Icon } from '@/cmp/Icon'
 import { batch, createSignal, Index, Show } from 'solid-js'
@@ -58,6 +58,17 @@ export function App() {
     setSavingChapters(true)
     await saveNextChapters(10)
     setSavingChapters(false)
+  })
+
+  const hasFailedChapters = () => chapters().some(isErrorChapter)
+
+  const retryAllFailedChapters = usePreventDefault(() => {
+    chapters().forEach((chapter, index) => {
+      if (chapter && isErrorChapter(chapter)) {
+        const chapterNumber = currentChapter() + index
+        retryChapter(chapterNumber)
+      }
+    })
   })
 
   const toggleThemeButton = () => (
@@ -157,6 +168,14 @@ export function App() {
             </Nav>
             {chapterControls()}
             <div aria-hidden class="button-group flex-center flex-wrap">
+              <Show when={hasFailedChapters()}>
+                <span class="notice-warning">
+                  Failed to load some chapters.{' '}
+                  <a href="" onClick={retryAllFailedChapters}>
+                    Retry all failed chapters
+                  </a>
+                </span>
+              </Show>
               <Show when={newestChapter() > currentChapter()}>
                 <span class="notice">
                   <a href="" onClick={resumeNewestChapter}>
