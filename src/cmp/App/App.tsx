@@ -244,7 +244,7 @@ export function App() {
                       label: 'Download epub',
                       onClick: async () => {
                         const bookData = {
-                          title: novelName(),
+                          title: `${novelName()} Chapter ${currentChapter()}-${currentChapter() + (loadCount() - 1)}`,
                           author: 'web-novel-reader',
                           language: 'en',
                           chapters: chapters().map((lines, index) => ({
